@@ -1,10 +1,4 @@
-# morethan-log
-
-<img width="1715" alt="image" src="https://user-images.githubusercontent.com/72514247/209824600-ca9c8acc-6d2d-4041-9931-43e34b8a9a5f.png">
-
-Next.js static blog using Notion as a Content Management System (CMS). Supports both Blog format Post as well as Page format for Resume. Deployed using Vercel.
-
-[Demo Blog](https://morethan-log.vercel.app) | [Demo Resume](https://morethan-log.vercel.app/resume)
+# Tech Decrypted
 
 ## Features
 
@@ -43,7 +37,7 @@ Next.js static blog using Notion as a Content Management System (CMS). Supports 
    - `NEXT_PUBLIC_NAVER_SITE_VERIFICATION` : For Naver search advisor Plugin.
    - `NEXT_PUBLIC_UTTERANCES_REPO` : For Utterances Plugin.
 
-## 10 Steps to build your own morethan-log (by 23.06.23)
+## 10 Steps to build your own 
 
 <details>
    <summary> Click to see guide </summary>
@@ -101,7 +95,6 @@ Next.js static blog using Notion as a Content Management System (CMS). Supports 
 
    Q3: Why don’t Notion posts update automatically?   
    A3: Please set the revalidateTime in site.config.js and observe how long it takes to update.
-   
    Q4: What should be entered for NEXT_PUBLIC_GOOGLE_MEASUREMENT_ID and NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION in site.config.js?
    A4: You can check https://github.com/morethanmin/morethan-log/issues/203. Please note that updates may take some time to take effect after setting.
 
