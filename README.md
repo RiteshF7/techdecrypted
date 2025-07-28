@@ -63,3 +63,25 @@ For more Images please check the [project images](https://github.com/codebucks27
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Notion Integration: Import Notion Page as MDX
+
+You can fetch a Notion page and save it as an `.mdx` file in the `content/blogs/` folder using the provided script.
+
+### Setup
+1. **Install dependencies:**
+   ```bash
+   npm install @notionhq/client notion-to-md
+   ```
+2. **Set environment variables:**
+   - `NOTION_API_KEY`: Your Notion integration token
+   - `NOTION_PAGE_ID`: The ID of the Notion page you want to export
+
+   You can set these in your shell or in an `.env` file and load them with [dotenv](https://www.npmjs.com/package/dotenv) if you prefer.
+
+### Usage
+```bash
+NOTION_API_KEY=your_secret NOTION_PAGE_ID=your_page_id node scripts/notion-to-mdx.js
+```
+
+The script will save the exported page as an `.mdx` file in `content/blogs/`.
+
