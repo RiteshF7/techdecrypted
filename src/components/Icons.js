@@ -409,6 +409,189 @@ export const GithubIcon = ({ className, ...rest }) => {
   );
 };
 
+export const PortfolioIcon = ({ className, ...rest }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={42}
+      height={42}
+      viewBox="0 0 42 42"
+      className={cx("w-full h-auto", className)}
+      {...rest}
+    >
+      <defs>
+        <linearGradient id="portfolioGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#1a1a1a" />
+          <stop offset="100%" stopColor="#000000" />
+        </linearGradient>
+      </defs>
+      
+      {/* Outer circle - Black with gradient */}
+      <circle
+        cx="21"
+        cy="21"
+        r="20"
+        fill="url(#portfolioGradient)"
+        stroke="white"
+        strokeWidth="2"
+      />
+      
+      {/* Yin Yang Design */}
+      {/* White half circle */}
+      <path
+        d="M21 1 A20 20 0 0 1 21 41 A10 10 0 0 0 21 21 A10 10 0 0 1 21 1"
+        fill="white"
+      />
+      
+      {/* Large black dot in white area */}
+      <circle
+        cx="21"
+        cy="31"
+        r="4"
+        fill="#000"
+      />
+      
+      {/* Small white inner dot in black dot */}
+      <circle
+        cx="21"
+        cy="31"
+        r="1.5"
+        fill="white"
+      />
+      
+      {/* Large white dot in black area */}
+      <circle
+        cx="21"
+        cy="11"
+        r="4"
+        fill="white"
+      />
+      
+      {/* Small black inner dot in white dot */}
+      <circle
+        cx="21"
+        cy="11"
+        r="1.5"
+        fill="#000"
+      />
+      
+      {/* Inner glow effect */}
+      <circle
+        cx="21"
+        cy="21"
+        r="18"
+        fill="none"
+        stroke="rgba(255,255,255,0.1)"
+        strokeWidth="0.5"
+      />
+    </svg>
+  );
+};
+export const PhoneIcon = ({ className, ...rest }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={42}
+      height={42}
+      viewBox="0 0 42 42"
+      className={cx("w-full h-auto", className)}
+      {...rest}
+    >
+      <defs>
+        <linearGradient id="phoneGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#1a1a1a" />
+          <stop offset="100%" stopColor="#000000" />
+        </linearGradient>
+        <linearGradient id="phoneScreenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#f8f9fa" />
+          <stop offset="100%" stopColor="#e9ecef" />
+        </linearGradient>
+      </defs>
+      
+      {/* Outer circle - Black with white border */}
+      <circle
+        cx="21"
+        cy="21"
+        r="20"
+        fill="url(#phoneGradient)"
+        stroke="white"
+        strokeWidth="2"
+      />
+      
+      {/* Phone body */}
+      <rect
+        x="13"
+        y="8"
+        width="16"
+        height="26"
+        rx="3"
+        ry="3"
+        fill="white"
+        stroke="#ddd"
+        strokeWidth="0.5"
+      />
+      
+      {/* Phone screen */}
+      <rect
+        x="15"
+        y="12"
+        width="12"
+        height="16"
+        rx="1"
+        ry="1"
+        fill="url(#phoneScreenGradient)"
+        stroke="#ccc"
+        strokeWidth="0.3"
+      />
+      
+      {/* Home button */}
+      <circle
+        cx="21"
+        cy="31"
+        r="1.5"
+        fill="#666"
+        stroke="#999"
+        strokeWidth="0.2"
+      />
+      
+      {/* Speaker grille */}
+      <rect
+        x="18"
+        y="9.5"
+        width="6"
+        height="1"
+        rx="0.5"
+        fill="#999"
+      />
+      
+      {/* Screen content - signal bars */}
+      <rect x="17" y="14" width="1" height="2" fill="#34A853" rx="0.2" />
+      <rect x="18.5" y="14" width="1" height="3" fill="#34A853" rx="0.2" />
+      <rect x="20" y="14" width="1" height="4" fill="#34A853" rx="0.2" />
+      <rect x="21.5" y="14" width="1" height="4" fill="#34A853" rx="0.2" />
+      
+      {/* Battery icon */}
+      <rect x="23" y="14.5" width="3" height="1.5" fill="#34A853" rx="0.2" />
+      <rect x="26" y="15" width="0.3" height="0.5" fill="#34A853" rx="0.1" />
+      
+      {/* Phone icon on screen */}
+      <path
+        d="M19 20.5c0.2-0.2 0.5-0.2 0.7 0l1 1c0.2 0.2 0.2 0.5 0 0.7l-0.5 0.5c-0.1 0.1-0.1 0.3 0 0.4 0.3 0.6 0.8 1.1 1.4 1.4 0.1 0.1 0.3 0.1 0.4 0l0.5-0.5c0.2-0.2 0.5-0.2 0.7 0l1 1c0.2 0.2 0.2 0.5 0 0.7l-0.3 0.3c-0.4 0.4-1 0.5-1.5 0.3-1.2-0.5-2.2-1.5-2.7-2.7-0.2-0.5-0.1-1.1 0.3-1.5l0.3-0.3z"
+        fill="#34A853"
+      />
+      
+      {/* Inner glow effect */}
+      <circle
+        cx="21"
+        cy="21"
+        r="18"
+        fill="none"
+        stroke="rgba(255,255,255,0.1)"
+        strokeWidth="0.5"
+      />
+    </svg>
+  );
+};
 export const DribbbleIcon = ({ className, ...rest }) => {
   return (
     <svg
