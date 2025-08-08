@@ -1,5 +1,7 @@
 import { blogs as allBlogs } from "@/.velite/generated";
+import BlogLayoutOne from "@/src/components/Blog/BlogLayoutOne";
 import BlogLayoutThree from "@/src/components/Blog/BlogLayoutThree";
+import BlogLayoutTwo from "@/src/components/Blog/BlogLayoutTwo";
 import Categories from "@/src/components/Blog/Categories";
 import { slug } from "github-slugger";
 

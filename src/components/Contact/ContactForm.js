@@ -85,35 +85,7 @@ const ContactSection = () => {
         ))}
       </div>
 
-      {/* Quick Message */}
-      <div className="mt-16 text-center">
-        <p className="font-medium text-lg xs:text-xl text-gray-600 dark:text-gray-400">
-          "I believe great things happen when passionate people collaborate. Let's build something amazing together!"
-        </p>
-        <div className="mt-6">
-          <span className="font-bold text-xl xs:text-2xl">
-            - Ritesh Singh
-          </span>
-        </div>
-      </div>
 
-      {/* Alternative Contact Info */}
-      <div className="mt-12 pt-8 border-t border-gray-300 dark:border-gray-700">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-          <div className="mb-4 sm:mb-0">
-            <h4 className="font-semibold text-lg mb-2">
-              Preferred Contact Methods:
-            </h4>
-            <p className="text-base text-gray-600 dark:text-gray-400">
-              Email for detailed discussions • LinkedIn for professional networking
-            </p>
-          </div>
-          <div className="text-sm text-gray-500 dark:text-gray-500">
-            <p>Response time: Usually within 24 hours</p>
-            <p>Available: Monday - Friday, 9 AM - 6 PM IST</p>
-          </div>
-        </div>
-      </div>
     </section>
   );
 };

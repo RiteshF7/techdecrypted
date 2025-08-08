@@ -1,118 +1,110 @@
 "use client";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { DribbbleIcon, GithubIcon, LinkedinIcon, PhoneIcon, PortfolioIcon, TwitterIcon } from "../Icons";
-import Link from "next/link";
+import React, { useState } from 'react';
+import { LinkedinIcon, GithubIcon, PortfolioIcon, TwitterIcon } from "../Icons";
 import siteMetadata from "@/src/utils/siteMetaData";
 
 const Footer = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const onSubmit = (data) => console.log(data);
-  console.log(errors);
+  const [email, setEmail] = useState('');
+
+  const handleEmailSubmit = () => {
+    if (!email) {
+      alert('Please enter an email address');
+      return;
+    }
+
+    console.log('Email submitted:', email);
+    alert('Thanks for subscribing! (Note: This is currently a demo - implement actual email handling)');
+    setEmail('');
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleEmailSubmit();
+    }
+  };
 
   return (
-    <footer className="mt-16 rounded-2xl bg-dark dark:bg-accentDark/90 m-2 sm:m-10 flex flex-col items-center text-light dark:text-dark">
-      <h3 className="mt-16 font-medium dark:font-bold text-center capitalize text-2xl sm:text-3xl lg:text-4xl px-4">
-        Interesting Stories | Updates | Guides
-      </h3>
-      <p className="mt-5 px-4 text-center w-full sm:w-3/5 font-light dark:font-medium text-sm sm:text-base">
-      
-      I’m Android architect, Electronics enthusiast, and startup builder.
-      Always up for swapping ideas on clean code, smart design, and products that actually matter.
-      Let’s connect and build cool stuff.
-      
-      </p>
+    <footer className="w-full border-t-2 border-solid border-dark dark:border-light bg-light dark:bg-dark text-dark dark:text-light">
+      <div className="w-full px-4 sm:px-6 md:px-12 py-6 sm:py-8 md:py-12">
+        <div className="max-w-6xl mx-auto">
+          {/* Top Section - Balanced Layout */}
+          <div className="flex flex-col md:flex-row items-center justify-between w-full gap-6 mb-8">
+            
+            {/* Social Links */}
+            <div className="flex-1 flex justify-start items-center gap-4">
+              <a href={siteMetadata.linkedin} rel="noopener noreferrer" className="inline-block w-6 h-6" aria-label="Reach out to me via LinkedIn" target="_blank">
+                <LinkedinIcon className="hover:scale-125 transition-all ease duration-200" />
+              </a>
+              <a href={siteMetadata.github} rel="noopener noreferrer" className="inline-block w-6 h-6" aria-label="Check my profile on Github" target="_blank">
+                <GithubIcon className="hover:scale-125 transition-all ease duration-200 dark:fill-light" />
+              </a>
+              <a href={siteMetadata.portfolio} rel="noopener noreferrer" className="inline-block w-6 h-6" aria-label="Check my portfolio" target="_blank">
+                <PortfolioIcon className="hover:scale-125 transition-all ease duration-200" />
+              </a>
+              
+            </div>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="mt-6 w-fit sm:min-w-[384px] flex items-stretch bg-light dark:bg-dark p-1 sm:p-2 rounded mx04"
-      >
-        <input
-          type="email"
-          placeholder="Enter your email"
-          {...register("email", { required: true, maxLength: 80 })}
-          className="w-full bg-transparent pl-2 sm:pl-0 text-dark focus:border-dark focus:ring-0 border-0 border-b mr-2 pb-1"
-        />
 
-        <input
-          type="submit"
-          className="bg-dark text-light dark:text-dark dark:bg-light cursor-pointer font-medium rounded px-3 sm:px-5 py-1"
-        />
-      </form>
-      <div className="flex items-center mt-8">
-        <a
-          href={siteMetadata.linkedin}
-          className="inline-block w-6 h-6 mr-4"
-          aria-label="Reach out to me via LinkedIn"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <LinkedinIcon className="hover:scale-125 transition-all ease duration-200" />
-        </a>
-        <a
-          href={siteMetadata.phone}
-          className="inline-block w-6 h-6 mr-4"
-          aria-label="Reach out to me via Twitter"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <PhoneIcon className="hover:scale-125 transition-all ease duration-200" />
-        </a>
-        <a
-          href={siteMetadata.github}
-          className="inline-block w-6 h-6 mr-4 fill-light"
-          aria-label="Check my profile on Github"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <GithubIcon className="fill-light dark:fill-dark  hover:scale-125 transition-all ease duration-200" />
-        </a>
-        <a
-          href={siteMetadata.portfolio}
-          className="inline-block w-6 h-6 mr-4"
-          aria-label="Check my profile on Dribbble"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <PortfolioIcon className="hover:scale-125 transition-all ease duration-200" />
-        </a>
+            {/* Email Subscription */}
+            <div className="flex-1 w-full md:w-auto">
+              <div className="flex items-stretch border-2 border-solid border-dark dark:border-light rounded overflow-hidden max-w-sm">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Enter your email"
+                  className="flex-1 px-3 py-2 bg-transparent border-0 outline-none focus:ring-0 text-dark dark:text-light placeholder:text-gray-500 dark:placeholder:text-gray-400 text-sm"
+                />
+                <button
+                  onClick={handleEmailSubmit}
+                  className="bg-dark dark:bg-light text-light dark:text-dark px-4 py-2 font-medium hover:bg-gray-700 dark:hover:bg-gray-200 transition-all duration-200 text-sm"
+                >
+                  Subscribe
+                </button>
+              </div>
+
+              <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                For updates and collaboration opportunities
+              </p>
+            </div>
+
+
+
+            
+            {/* Made By Section */}
+            <div className="flex-1 text-center md:text-end">
+              <div className="mb-3">
+                <span className="text-sm font-medium">Made with </span>
+                <span className="text-red-500 text-lg inline-block hover:scale-110 transition-transform duration-300">
+                  ♥
+                </span>
+                <span className="text-sm font-medium"> by</span>
+              </div>
+
+              <a 
+                href="https://github.com/RiteshF7" 
+                className="font-bold text-lg hover:underline transition-all duration-300 hover:scale-105 inline-block"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ritesh Singh Sohlot
+              </a>
+
+              <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                © 2025 All rights reserved
+              </p>
+            </div>
+
+
+
+            
+
+
+
+          </div>
+        </div>
       </div>
-
-    <div className="w-full mt-8 md:mt-12 relative font-medium border-t border-white/30 py-6 px-8 flex flex-col md:flex-row items-center justify-center bg-gradient-to-r from-yellow-400/10 via-orange-300/10 to-yellow-400/10 overflow-hidden">
-  <div className="text-center relative group">
-    <div className="mb-2">
-      <span className="text-amber-900 text-lg font-medium">Made with </span>
-      <span className="text-red-500 text-xl inline-block transform hover:scale-110 transition-transform duration-500 animate-pulse">
-        ♥
-      </span>
-      <span className="text-amber-900 text-lg font-medium"> by</span>
-    </div>
-    <a 
-      href="" 
-      className="text-amber-800 text-xl font-bold hover:text-amber-700 transition-all duration-500 hover:scale-105 transform inline-block relative group/name" 
-      target="_blank"
-    >
-      Ritesh Singh Sohlot
-      <div className="absolute inset-0 opacity-0 group-hover/name:opacity-100 transition-opacity duration-700 pointer-events-none">
-        <span className="absolute top-0 left-2 text-yellow-400 text-xs opacity-60 animate-ping">✨</span>
-        <span className="absolute top-1 right-4 text-amber-400 text-xs opacity-40 animate-ping" style={{animationDelay: '0.8s'}}>✨</span>
-        <span className="absolute -top-1 left-1/2 text-orange-400 text-xs opacity-50 animate-ping" style={{animationDelay: '1.6s'}}>✨</span>
-      </div>
-      <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-amber-500 to-orange-500 w-0 group-hover/name:w-full transition-all duration-500"></div>
-    </a>
-    <div className="mt-3 flex justify-center space-x-2 opacity-40">
-      <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce"></div>
-      <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-bounce" style={{animationDelay: '0.5s'}}></div>
-      <div className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-bounce" style={{animationDelay: '1s'}}></div>
-    </div>
-  </div>
-</div>
-
-    
     </footer>
   );
 };
