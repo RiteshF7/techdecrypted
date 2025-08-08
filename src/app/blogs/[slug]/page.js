@@ -1,38 +1,40 @@
+import { format } from "date-fns";
 import BlogDetails from "@/src/components/Blog/BlogDetails";
 import RenderMdx from "@/src/components/Blog/RenderMdx";
 import Tag from "@/src/components/Elements/Tag";
 import siteMetadata from "@/src/utils/siteMetaData";
-import { blogs } from '@/.velite/generated'
+import { blogs } from '@/.velite/generated';
 import { slug as slugify } from "github-slugger";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import PropTypes from "prop-types";
 
 export async function generateStaticParams() {
   return blogs.map((blog) => ({ slug: blog.slug }));
 }
 
 export async function generateMetadata({ params }) {
-  const {slug} = await params
+  const { slug } = await params;
   const blog = blogs.find((blog) => blog.slug === slug);
   if (!blog) {
-    return;
+    return {};
   }
 
   const publishedAt = new Date(blog.publishedAt).toISOString();
   const modifiedAt = new Date(blog.updatedAt || blog.publishedAt).toISOString();
 
   let imageList = [siteMetadata.socialBanner];
-  if (blog.image) {
+  if (blog.image?.src) {
     imageList =
       typeof blog.image.src === "string"
         ? [siteMetadata.siteUrl + blog.image.src]
         : blog.image;
   }
-  const ogImages = imageList.map((img) => {
-    return { url: img.includes("http") ? img : siteMetadata.siteUrl + img };
-  });
+  const ogImages = imageList.map((img) => ({
+    url: img.includes("http") ? img : siteMetadata.siteUrl + img,
+  }));
 
-  const authors = blog?.author ? [blog.author] : siteMetadata.author;
+  const authors = blog.author ? [blog.author] : [siteMetadata.author];
 
   return {
     title: blog.title,
@@ -47,7 +49,7 @@ export async function generateMetadata({ params }) {
       publishedTime: publishedAt,
       modifiedTime: modifiedAt,
       images: ogImages,
-      authors: authors.length > 0 ? authors : [siteMetadata.author],
+      authors,
     },
     twitter: {
       card: "summary_large_image",
@@ -58,30 +60,29 @@ export async function generateMetadata({ params }) {
   };
 }
 
-
-function TableOfContentsItem({ item, level = "two" }){
+function TableOfContentsItem({ item, level = "two" }) {
   return (
-    <li className="py-1">
+    <li className="py-1.5">
       <a
         href={item.url}
         data-level={level}
         className="data-[level=two]:pl-0 data-[level=two]:pt-2
-                  data-[level=two]:border-t border-solid border-dark/40
+                  data-[level=two]:border-t border-solid border-dark/40 dark:border-light/40
                   data-[level=three]:pl-4
                   sm:data-[level=three]:pl-6
-                  flex items-center justify-start"
+                  flex items-center justify-start hover:text-accent dark:hover:text-accentDark transition-colors duration-200"
       >
         {level === "three" && (
-          <span className="flex w-1 h-1 rounded-full bg-dark mr-2">&nbsp;</span>
+          <span className="flex w-1.5 h-1.5 rounded-full bg-dark dark:bg-light mr-2">&nbsp;</span>
         )}
         <span className="hover:underline">{item.title}</span>
       </a>
-      {item.items.length > 0 && (
-        <ul className="mt-1">
+      {item.items?.length > 0 && (
+        <ul className="mt-2">
           {item.items.map((subItem) => (
-            <TableOfContentsItem 
-              key={subItem.url} 
-              item={subItem} 
+            <TableOfContentsItem
+              key={subItem.url}
+              item={subItem}
               level="three"
             />
           ))}
@@ -91,18 +92,25 @@ function TableOfContentsItem({ item, level = "two" }){
   );
 }
 
-export default async function BlogPage({ params }) {
-  const {slug} = await params
-  const blog = blogs.find((blog) => {
-    return blog.slug === slug
-  });
+TableOfContentsItem.propTypes = {
+  item: PropTypes.shape({
+    url: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    items: PropTypes.arrayOf(PropTypes.object),
+  }).isRequired,
+  level: PropTypes.oneOf(["two", "three"]),
+};
 
-  if(!blog){
-    notFound()
+export default async function BlogPage({ params }) {
+  const { slug } = await params;
+  const blog = blogs.find((blog) => blog.slug === slug);
+
+  if (!blog) {
+    notFound();
   }
 
   let imageList = [siteMetadata.socialBanner];
-  if (blog.image) {
+  if (blog.image?.src) {
     imageList =
       typeof blog.image.src === "string"
         ? [siteMetadata.siteUrl + blog.image.src]
@@ -117,67 +125,75 @@ export default async function BlogPage({ params }) {
     "image": imageList,
     "datePublished": new Date(blog.publishedAt).toISOString(),
     "dateModified": new Date(blog.updatedAt || blog.publishedAt).toISOString(),
-    "author": [{
+    "author": [
+      {
         "@type": "Person",
-        "name": blog?.author ? [blog.author] : siteMetadata.author,
+        "name": blog.author || siteMetadata.author,
         "url": siteMetadata.twitter,
-      }]
-  }
+      },
+    ],
+  };
 
   return (
     <>
-    <script
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-       <article>
-      <div className="mb-8 text-center relative w-full h-[70vh] bg-dark">
-        <div className="w-full z-10 flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <Tag
-            name={blog.tags[0]}
-            link={`/categories/${slugify(blog.tags[0])}`}
-            className="px-6 text-sm py-2"
+      <article>
+        <div className="mb-8 text-center relative w-full h-[70vh] bg-dark">
+          <div className="w-full z-10 flex flex-col items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <Tag
+              name={blog.tags?.[0] || "Uncategorized"}
+              link={`/categories/${slugify(blog.tags?.[0] || "uncategorized")}`}
+              className="px-6 text-sm py-2"
+            />
+            <h1 className="inline-block mt-6 font-semibold capitalize text-light text-2xl md:text-3xl lg:text-5xl !leading-normal relative w-5/6">
+              {blog.title || "Untitled Post"}
+            </h1>
+          </div>
+          <div className="absolute top-0 left-0 right-0 bottom-0 h-full bg-dark/60 dark:bg-dark/40" />
+          <Image
+            src={blog.image?.src || siteMetadata.socialBanner}
+            placeholder={blog.image?.blurDataURL ? "blur" : "empty"}
+            blurDataURL={blog.image?.blurDataURL}
+            alt={blog.title || "Blog post"}
+            width={blog.image?.width || 1200}
+            height={blog.image?.height || 630}
+            className="aspect-square w-full h-full object-cover object-center"
+            priority
+            sizes="100vw"
           />
-          <h1
-            className="inline-block mt-6 font-semibold capitalize text-light text-2xl md:text-3xl lg:text-5xl !leading-normal relative w-5/6"
-          >
-            {blog.title}
-          </h1>
         </div>
-        <div className="absolute top-0 left-0 right-0 bottom-0 h-full bg-dark/60 dark:bg-dark/40" />
-        <Image
-          src={blog.image.src}
-          placeholder="blur"
-          blurDataURL={blog.image.blurDataURL}
-          alt={blog.title}
-          width={blog.image.width}
-          height={blog.image.height}
-          className="aspect-square w-full h-full object-cover object-center"
-          priority
-          sizes="100vw"
-        />
-      </div>
-      <BlogDetails blog={blog} slug={params.slug} />
-
-      <div className="grid grid-cols-12  gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
-        <div className="col-span-12  lg:col-span-4">
-          <details
-            className="border-[1px] border-solid border-dark dark:border-light text-dark dark:text-light rounded-lg p-4 sticky top-6 max-h-[80vh] overflow-hidden overflow-y-auto"
-            open
-          >
-            <summary className="text-lg font-semibold capitalize cursor-pointer">
-              Table Of Content
-            </summary>
-            <ul className="mt-4 font-in text-base">
-              {blog.toc.map((item) => (
-                <TableOfContentsItem key={item.url} item={item} />
-              ))}
-            </ul>
-          </details>
+        <BlogDetails blog={blog} slug={slug} />
+        <div className="grid grid-cols-12 gap-y-8 lg:gap-8 sxl:gap-16 mt-8 px-5 md:px-10">
+          <div className="col-span-12 lg:col-span-4">
+            <details
+              className="border-[1px] border-solid border-dark dark:border-light text-dark dark:text-light rounded-lg p-4 sticky top-6 max-h-[80vh] overflow-hidden overflow-y-auto"
+              open
+              aria-label="Table of Contents"
+            >
+              <summary className="text-lg font-semibold capitalize cursor-pointer">
+                Table of Contents
+              </summary>
+              <ul className="mt-4 font-in text-base">
+                {blog.toc?.map((item) => (
+                  <TableOfContentsItem key={item.url} item={item} />
+                ))}
+              </ul>
+            </details>
+          </div>
+          <div className="col-span-12 lg:col-span-8">
+            <RenderMdx blog={blog} />
+          </div>
         </div>
-        <RenderMdx blog={blog} />
-      </div>
-    </article>
+      </article>
     </>
   );
 }
+
+BlogPage.propTypes = {
+  params: PropTypes.shape({
+    slug: PropTypes.string.isRequired,
+  }).isRequired,
+};

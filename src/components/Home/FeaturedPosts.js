@@ -75,7 +75,7 @@ const FeaturedPosts = ({ blogs }) => {
       {/* View All Posts Button */}
       <div className="text-center mt-12">
         <a 
-          href="/blog" 
+          href="/categories/all" 
           className="inline-block border-2 border-solid border-dark dark:border-light px-8 py-3 rounded hover:bg-dark hover:text-light dark:hover:bg-light dark:hover:text-dark transition-all duration-200 font-medium"
         >
           View All Posts →
