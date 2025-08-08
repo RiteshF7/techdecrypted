@@ -5,39 +5,19 @@ import Image from "next/image";
 import { slug } from "github-slugger";
 import formatDate from "@/src/utils/formatdate";
 
-
-
 const BlogLayoutOne = ({ blog }) => {
-
-  if(!blog){
+  if (!blog) {
     return null;
   }
 
-  
+  // Safe access to readingTime
+  const readingTime = blog.readingTime?.text || blog.readingTime || null;
 
   return (
-    <div className="border-2 border-solid border-dark dark:border-light rounded-lg overflow-hidden bg-light dark:bg-dark hover:scale-105 transition-all duration-300 group h-full">
-      {/* Header Bar */}
-      <div className="bg-gray-800 dark:bg-gray-900 p-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-white text-sm font-medium">Featured Article</span>
-          {blog.readingTime && (
-            <span className="px-2 py-1 rounded text-xs text-white bg-yellow-500">
-              {blog.readingTime.text} min read
-            </span>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <Link href={blog.url || '#'}>
-            <button className="px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors duration-200">
-              Read Post
-            </button>
-          </Link>
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="relative h-96 md:h-[500px] overflow-hidden">
+    <div className="border-2 border-solid border-dark dark:border-light rounded-lg overflow-hidden bg-light dark:bg-dark hover:scale-105 transition-all duration-300 group h-full flex flex-col">
+      
+      {/* Main Content Area - Takes remaining height */}
+      <div className="relative flex-1 overflow-hidden">
         {/* Background Image */}
         <Image
           src={blog.image?.src || '/placeholder-blog.jpg'}
@@ -96,17 +76,17 @@ const BlogLayoutOne = ({ blog }) => {
         </div>
       </div>
       
-      {/* Bottom Stats Bar */}
-      <div className="border-t border-gray-300 dark:border-gray-600 p-3 bg-gray-50 dark:bg-gray-800">
+      {/* Bottom Stats Bar - Fixed height */}
+      <div className="border-t border-gray-300 dark:border-gray-600 p-3 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
         <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
           <div className="flex items-center gap-4">
             {blog.tags && (
               <span>{blog.tags.length} Topics</span>
             )}
-            {blog.readingTime.text && (
+            {readingTime && (
               <>
                 <span>•</span>
-                <span>{blog.readingTime.text} min read</span>
+                <span>{readingTime}</span>
               </>
             )}
           </div>
@@ -121,5 +101,3 @@ const BlogLayoutOne = ({ blog }) => {
 };
 
 export default BlogLayoutOne;
-
-
