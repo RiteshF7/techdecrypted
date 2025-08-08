@@ -82,7 +82,7 @@ const Footer = () => {
         </a>
       </div>
 
-      <div className="w-full mt-8 md:mt-12 relative font-medium border-t border-white/30 py-6 px-8 flex flex-col md:flex-row items-center justify-center bg-gradient-to-r from-yellow-400/10 via-orange-300/10 to-yellow-400/10 overflow-hidden">
+    <div className="w-full mt-8 md:mt-12 relative font-medium border-t border-white/30 py-6 px-8 flex flex-col md:flex-row items-center justify-center bg-gradient-to-r from-yellow-400/10 via-orange-300/10 to-yellow-400/10 overflow-hidden">
   <div className="text-center relative group">
     <div className="mb-2">
       <span className="text-amber-900 text-lg font-medium">Made with </span>
