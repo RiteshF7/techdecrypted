@@ -36,6 +36,7 @@ const Skills = () => {
         {SkillList.map((item, index) => {
           return (
             <button 
+            key={index}
           className="mt-6 mr-6 bg-dark dark:bg-light text-light dark:text-dark px-6 py-3 rounded font-medium hover:bg-gray-700 dark:hover:bg-gray-200 transition-all duration-300"
         >
           {item}

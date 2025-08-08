@@ -4,17 +4,10 @@ import HeroSection from "@/src/components/About/herosection";
 import Skills from "@/src/components/About/Skills";
 import Link from "next/link";
 
-
-export const metadata = {
-  title: "About Me",
-  description: `Here are some details about my self.`,
-};
-
-export default function About() {
+export default function Experience() {
   return (
-    <>
-      <HeroSection />
-      <Skills />
-    </>
+    
+     <ExperienceSection/>
+  
   );
 }

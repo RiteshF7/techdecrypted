@@ -54,16 +54,9 @@ const toggle = () =>{
         >
             <Link href="/" className="mr-2">Home</Link>
             <Link href="/about" className="mx-2">About</Link>
+            <Link href="/experience" className="mx-2">Experience</Link>
             <Link href="/contact" className="mx-2">Contact</Link>
-            <button onClick={() => setMode(mode === "light" ? "dark" : "light")  }
-            className={cx("w-6 h-6 ease ml-2 flex items-center justify-center rounded-full p-1", mode === "light" ? "bg-dark text-light" :
-            "bg-light text-dark" )}
-            aria-label="theme-switcher"
-            >
-                {
-                  mode === "light" ? <MoonIcon className={"fill-dark"} />  : <SunIcon className={"fill-dark"} />
-                }
-            </button>
+            
         </nav>
 
 
@@ -71,16 +64,10 @@ const toggle = () =>{
         fixed top-6 right-1/2 translate-x-1/2 bg-light/80 backdrop-blur-sm z-50">
             <Link href="/" className="mr-2">Home</Link>
             <Link href="/about" className="mx-2">About</Link>
+            <Link href="/experience" className="mx-2">Experience</Link>
+            <Link href="/projects" className="mx-2">Projects</Link>
             <Link href="/contact" className="mx-2">Contact</Link>
-            <button onClick={() => setMode(mode === "light" ? "dark" : "light")  }
-            className={cx("w-6 h-6 ease ml-2 flex items-center justify-center rounded-full p-1", mode === "light" ? "bg-dark text-light" :
-            "bg-light text-dark" )}
-            aria-label="theme-switcher"
-            >
-                {
-                  mode === "light" ? <MoonIcon className={"fill-dark"} />  : <SunIcon className={"fill-dark"} />
-                }
-            </button>
+            
         </nav>
         <div className=" hidden sm:flex items-center">
             <a href={siteMetadata.linkedin} rel="noopener noreferrer" className="inline-block w-6 h-6 mr-4" aria-label="Reach out to me via LinkedIn" target="_blank"><LinkedinIcon className="hover:scale-125 transition-all ease duration-200" /></a>

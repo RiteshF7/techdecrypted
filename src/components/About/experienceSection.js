@@ -6,7 +6,7 @@ const ExperienceItem = ({ experience, index }) => {
     <div className="w-full border-b-2 border-solid border-dark dark:border-light p-5 xs:p-10 sm:p-12 md:p-16 lg:p-20 text-dark dark:text-light">
       <div className="flex flex-col md:flex-row md:items-start md:justify-between">
         {/* Left side - Company and Role */}
-        <div className="md:w-1/3 mb-6 md:mb-0">
+        <div className="md:w-1/3  md:mb-0">
           <h3 className="font-bold text-2xl xs:text-3xl sm:text-4xl md:text-5xl capitalize mb-2">
             {experience.company}
           </h3>
