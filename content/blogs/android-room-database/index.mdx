@@ -1,0 +1,671 @@
+---
+title: "Android Room Database: Complete Guide to Local Data Persistence"
+description: "Learn how to implement Room database in Android applications for efficient local data storage, with practical examples and best practices."
+image: android.png
+publishedAt: 2024-05-20 16:20:00
+updatedAt: 2024-05-20 16:20:00
+author: "Ritesh Sing"
+isPublished: true
+tags: 
+- android
+- room
+- database
+- sqlite
+- local-storage
+slug: android-room-database
+---
+
+Room is a persistence library that provides an abstraction layer over SQLite to allow for more robust database access while harnessing the full power of SQLite. It's part of the Android Jetpack libraries and is the recommended solution for local data storage in Android applications. This comprehensive guide will walk you through implementing Room database in your Android apps.
+
+## What is Room?
+
+Room is a library that provides an abstraction layer over SQLite, making it easier to work with databases in Android applications. It provides compile-time verification of SQL queries and convenience annotations that minimize repetitive and error-prone boilerplate code.
+
+### Key Features
+
+- **Compile-time verification**: SQL queries are validated at compile time
+- **Convenient annotations**: Reduces boilerplate code
+- **Kotlin coroutines support**: Built-in support for asynchronous operations
+- **LiveData integration**: Automatic UI updates when data changes
+- **Migration support**: Easy database schema updates
+
+## Setting Up Room
+
+### Dependencies
+
+Add the necessary dependencies to your `build.gradle` file:
+
+```gradle
+dependencies {
+    def room_version = "2.6.1"
+    
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    
+    // Optional - Test helpers
+    testImplementation "androidx.room:room-testing:$room_version"
+}
+```
+
+## Database Components
+
+Room consists of three main components:
+
+1. **Entity**: Represents a table in the database
+2. **DAO (Data Access Object)**: Contains methods to access the database
+3. **Database**: The main database class
+
+## Entity
+
+Entities represent tables in your database. They are annotated with `@Entity`.
+
+### Basic Entity
+
+```kotlin
+@Entity(tableName = "users")
+data class User(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    
+    @ColumnInfo(name = "user_name")
+    val name: String,
+    
+    val email: String,
+    
+    @ColumnInfo(name = "created_at")
+    val createdAt: Long = System.currentTimeMillis()
+)
+```
+
+### Entity with Relationships
+
+```kotlin
+@Entity(tableName = "posts")
+data class Post(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    
+    val title: String,
+    val content: String,
+    
+    @ColumnInfo(name = "user_id")
+    val userId: Int,
+    
+    @ColumnInfo(name = "created_at")
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "comments")
+data class Comment(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    
+    val text: String,
+    
+    @ColumnInfo(name = "post_id")
+    val postId: Int,
+    
+    @ColumnInfo(name = "user_id")
+    val userId: Int,
+    
+    @ColumnInfo(name = "created_at")
+    val createdAt: Long = System.currentTimeMillis()
+)
+```
+
+### Entity with Foreign Keys
+
+```kotlin
+@Entity(
+    tableName = "posts",
+    foreignKeys = [
+        ForeignKey(
+            entity = User::class,
+            parentColumns = ["id"],
+            childColumns = ["user_id"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+data class Post(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    
+    val title: String,
+    val content: String,
+    
+    @ColumnInfo(name = "user_id")
+    val userId: Int,
+    
+    @ColumnInfo(name = "created_at")
+    val createdAt: Long = System.currentTimeMillis()
+)
+```
+
+### Entity with Indices
+
+```kotlin
+@Entity(
+    tableName = "users",
+    indices = [
+        Index(value = ["email"], unique = true),
+        Index(value = ["user_name"])
+    ]
+)
+data class User(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    
+    @ColumnInfo(name = "user_name")
+    val name: String,
+    
+    val email: String,
+    
+    @ColumnInfo(name = "created_at")
+    val createdAt: Long = System.currentTimeMillis()
+)
+```
+
+## DAO (Data Access Object)
+
+DAOs define the methods to access the database. They are interfaces annotated with `@Dao`.
+
+### Basic DAO
+
+```kotlin
+@Dao
+interface UserDao {
+    
+    @Query("SELECT * FROM users")
+    suspend fun getAllUsers(): List<User>
+    
+    @Query("SELECT * FROM users WHERE id = :userId")
+    suspend fun getUserById(userId: Int): User?
+    
+    @Insert
+    suspend fun insertUser(user: User): Long
+    
+    @Insert
+    suspend fun insertUsers(users: List<User>)
+    
+    @Update
+    suspend fun updateUser(user: User)
+    
+    @Delete
+    suspend fun deleteUser(user: User)
+    
+    @Query("DELETE FROM users WHERE id = :userId")
+    suspend fun deleteUserById(userId: Int)
+    
+    @Query("SELECT COUNT(*) FROM users")
+    suspend fun getUserCount(): Int
+}
+```
+
+### DAO with Complex Queries
+
+```kotlin
+@Dao
+interface PostDao {
+    
+    @Query("""
+        SELECT * FROM posts 
+        WHERE user_id = :userId 
+        ORDER BY created_at DESC
+    """)
+    suspend fun getPostsByUser(userId: Int): List<Post>
+    
+    @Query("""
+        SELECT * FROM posts 
+        WHERE title LIKE '%' || :searchTerm || '%'
+        OR content LIKE '%' || :searchTerm || '%'
+    """)
+    suspend fun searchPosts(searchTerm: String): List<Post>
+    
+    @Query("""
+        SELECT p.*, u.name as author_name 
+        FROM posts p 
+        INNER JOIN users u ON p.user_id = u.id 
+        ORDER BY p.created_at DESC
+    """)
+    suspend fun getPostsWithAuthor(): List<PostWithAuthor>
+    
+    @Transaction
+    suspend fun insertPostWithComments(post: Post, comments: List<Comment>) {
+        insertPost(post)
+        insertComments(comments)
+    }
+}
+```
+
+### Data Classes for Complex Queries
+
+```kotlin
+data class PostWithAuthor(
+    @Embedded val post: Post,
+    @Relation(
+        parentColumn = "user_id",
+        entityColumn = "id"
+    )
+    val author: User
+)
+
+data class PostWithComments(
+    @Embedded val post: Post,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "post_id"
+    )
+    val comments: List<Comment>
+)
+```
+
+## Database
+
+The database class is the main access point for the persistent data. It's annotated with `@Database`.
+
+### Basic Database
+
+```kotlin
+@Database(
+    entities = [User::class, Post::class, Comment::class],
+    version = 1,
+    exportSchema = false
+)
+abstract class AppDatabase : RoomDatabase() {
+    
+    abstract fun userDao(): UserDao
+    abstract fun postDao(): PostDao
+    abstract fun commentDao(): CommentDao
+    
+    companion object {
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+        
+        fun getDatabase(context: Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "app_database"
+                ).build()
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
+}
+```
+
+### Database with Migrations
+
+```kotlin
+@Database(
+    entities = [User::class, Post::class, Comment::class],
+    version = 2,
+    exportSchema = true
+)
+abstract class AppDatabase : RoomDatabase() {
+    
+    abstract fun userDao(): UserDao
+    abstract fun postDao(): PostDao
+    abstract fun commentDao(): CommentDao
+    
+    companion object {
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+        
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Add new column
+                database.execSQL(
+                    "ALTER TABLE users ADD COLUMN phone_number TEXT"
+                )
+            }
+        }
+        
+        fun getDatabase(context: Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "app_database"
+                )
+                .addMigrations(MIGRATION_1_2)
+                .build()
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
+}
+```
+
+## Repository Pattern
+
+The repository pattern provides a clean API for data operations and manages different data sources.
+
+```kotlin
+class UserRepository(
+    private val userDao: UserDao,
+    private val apiService: ApiService
+) {
+    
+    suspend fun getUsers(): List<User> {
+        return try {
+            // Try to get from network
+            val users = apiService.getUsers()
+            // Cache in database
+            userDao.insertUsers(users)
+            users
+        } catch (e: Exception) {
+            // Fallback to local database
+            userDao.getAllUsers()
+        }
+    }
+    
+    suspend fun getUserById(id: Int): User? {
+        return userDao.getUserById(id)
+    }
+    
+    suspend fun insertUser(user: User): Long {
+        return userDao.insertUser(user)
+    }
+    
+    suspend fun updateUser(user: User) {
+        userDao.updateUser(user)
+    }
+    
+    suspend fun deleteUser(user: User) {
+        userDao.deleteUser(user)
+    }
+}
+```
+
+## Using Room with Coroutines
+
+Room provides built-in support for Kotlin coroutines.
+
+### DAO with Coroutines
+
+```kotlin
+@Dao
+interface UserDao {
+    
+    @Query("SELECT * FROM users")
+    fun getAllUsersFlow(): Flow<List<User>>
+    
+    @Query("SELECT * FROM users WHERE id = :userId")
+    fun getUserByIdFlow(userId: Int): Flow<User?>
+    
+    @Insert
+    suspend fun insertUser(user: User): Long
+    
+    @Update
+    suspend fun updateUser(user: User)
+    
+    @Delete
+    suspend fun deleteUser(user: User)
+}
+```
+
+### Repository with Coroutines
+
+```kotlin
+class UserRepository(
+    private val userDao: UserDao
+) {
+    
+    fun getAllUsersFlow(): Flow<List<User>> {
+        return userDao.getAllUsersFlow()
+    }
+    
+    fun getUserByIdFlow(userId: Int): Flow<User?> {
+        return userDao.getUserByIdFlow(userId)
+    }
+    
+    suspend fun insertUser(user: User): Long {
+        return userDao.insertUser(user)
+    }
+    
+    suspend fun updateUser(user: User) {
+        userDao.updateUser(user)
+    }
+    
+    suspend fun deleteUser(user: User) {
+        userDao.deleteUser(user)
+    }
+}
+```
+
+## Using Room with LiveData
+
+Room can return LiveData objects that automatically update the UI when the database changes.
+
+### DAO with LiveData
+
+```kotlin
+@Dao
+interface UserDao {
+    
+    @Query("SELECT * FROM users")
+    fun getAllUsersLiveData(): LiveData<List<User>>
+    
+    @Query("SELECT * FROM users WHERE id = :userId")
+    fun getUserByIdLiveData(userId: Int): LiveData<User?>
+    
+    @Insert
+    suspend fun insertUser(user: User): Long
+    
+    @Update
+    suspend fun updateUser(user: User)
+    
+    @Delete
+    suspend fun deleteUser(user: User)
+}
+```
+
+### ViewModel with LiveData
+
+```kotlin
+class UserViewModel(
+    private val repository: UserRepository
+) : ViewModel() {
+    
+    val users: LiveData<List<User>> = repository.getAllUsersLiveData()
+    
+    fun insertUser(name: String, email: String) {
+        viewModelScope.launch {
+            val user = User(name = name, email = email)
+            repository.insertUser(user)
+        }
+    }
+    
+    fun updateUser(user: User) {
+        viewModelScope.launch {
+            repository.updateUser(user)
+        }
+    }
+    
+    fun deleteUser(user: User) {
+        viewModelScope.launch {
+            repository.deleteUser(user)
+        }
+    }
+}
+```
+
+## Testing Room
+
+### Unit Testing
+
+```kotlin
+@RunWith(AndroidJUnit4::class)
+class UserDaoTest {
+    
+    private lateinit var database: AppDatabase
+    private lateinit var userDao: UserDao
+    
+    @Before
+    fun createDb() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        database = Room.inMemoryDatabaseBuilder(
+            context, AppDatabase::class.java
+        ).build()
+        userDao = database.userDao()
+    }
+    
+    @After
+    fun closeDb() {
+        database.close()
+    }
+    
+    @Test
+    fun insertAndGetUser() = runTest {
+        val user = User(name = "John", email = "john@example.com")
+        val userId = userDao.insertUser(user)
+        
+        val retrievedUser = userDao.getUserById(userId.toInt())
+        assertThat(retrievedUser).isNotNull()
+        assertThat(retrievedUser?.name).isEqualTo("John")
+    }
+    
+    @Test
+    fun getAllUsers() = runTest {
+        val user1 = User(name = "John", email = "john@example.com")
+        val user2 = User(name = "Jane", email = "jane@example.com")
+        
+        userDao.insertUser(user1)
+        userDao.insertUser(user2)
+        
+        val users = userDao.getAllUsers()
+        assertThat(users).hasSize(2)
+    }
+}
+```
+
+### Integration Testing
+
+```kotlin
+@RunWith(AndroidJUnit4::class)
+class UserRepositoryTest {
+    
+    private lateinit var database: AppDatabase
+    private lateinit var userDao: UserDao
+    private lateinit var repository: UserRepository
+    
+    @Before
+    fun setup() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        database = Room.inMemoryDatabaseBuilder(
+            context, AppDatabase::class.java
+        ).build()
+        userDao = database.userDao()
+        repository = UserRepository(userDao)
+    }
+    
+    @After
+    fun cleanup() {
+        database.close()
+    }
+    
+    @Test
+    fun insertAndRetrieveUser() = runTest {
+        val user = User(name = "John", email = "john@example.com")
+        val userId = repository.insertUser(user)
+        
+        val retrievedUser = repository.getUserById(userId.toInt())
+        assertThat(retrievedUser).isNotNull()
+        assertThat(retrievedUser?.name).isEqualTo("John")
+    }
+}
+```
+
+## Best Practices
+
+### 1. **Use Repository Pattern**
+- Separate data access logic from business logic
+- Provide a clean API for data operations
+- Handle multiple data sources (local, remote)
+
+### 2. **Use Coroutines**
+- Perform database operations on background threads
+- Use `suspend` functions for database operations
+- Use `Flow` for reactive data streams
+
+### 3. **Handle Migrations Properly**
+- Always test migrations thoroughly
+- Use `exportSchema = true` for version control
+- Plan database schema changes carefully
+
+### 4. **Optimize Queries**
+- Use indices for frequently queried columns
+- Avoid `SELECT *` when possible
+- Use `@Transaction` for complex operations
+
+### 5. **Error Handling**
+- Handle database exceptions gracefully
+- Provide fallback mechanisms
+- Log errors for debugging
+
+### 6. **Testing**
+- Use in-memory databases for testing
+- Test all CRUD operations
+- Test migrations thoroughly
+
+## Common Patterns
+
+### Type Converters
+
+```kotlin
+class Converters {
+    @TypeConverter
+    fun fromTimestamp(value: Long?): Date? {
+        return value?.let { Date(it) }
+    }
+    
+    @TypeConverter
+    fun dateToTimestamp(date: Date?): Long? {
+        return date?.time
+    }
+    
+    @TypeConverter
+    fun fromString(value: String?): List<String>? {
+        return value?.split(",")
+    }
+    
+    @TypeConverter
+    fun toString(list: List<String>?): String? {
+        return list?.joinToString(",")
+    }
+}
+```
+
+### Database with Type Converters
+
+```kotlin
+@Database(
+    entities = [User::class],
+    version = 1,
+    exportSchema = false
+)
+@TypeConverters(Converters::class)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun userDao(): UserDao
+}
+```
+
+## Conclusion
+
+Room provides a powerful and efficient way to handle local data persistence in Android applications. Its key benefits include:
+
+- **Compile-time verification** of SQL queries
+- **Reduced boilerplate code** through annotations
+- **Built-in support** for coroutines and LiveData
+- **Easy testing** with in-memory databases
+- **Migration support** for schema updates
+
+By following the patterns and best practices outlined in this guide, you can build robust, maintainable Android applications with efficient local data storage. Room's integration with other Android Jetpack components makes it the ideal choice for local data persistence in modern Android development.
+
+Remember to always test your database operations thoroughly and handle errors gracefully to provide a smooth user experience.

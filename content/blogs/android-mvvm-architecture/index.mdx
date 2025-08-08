@@ -1,0 +1,581 @@
+---
+title: "MVVM Architecture in Android: A Complete Guide"
+description: "Learn how to implement the Model-View-ViewModel (MVVM) architecture pattern in Android applications for better code organization and maintainability."
+image: android.png
+publishedAt: 2024-05-18 11:45:00
+updatedAt: 2024-05-18 11:45:00
+author: "Ritesh Sing"
+isPublished: true
+tags: 
+- android
+- mvvm
+- architecture
+- viewmodel
+- live-data
+slug: android-mvvm-architecture
+---
+
+The Model-View-ViewModel (MVVM) architecture pattern has become the standard for Android development, providing a clean separation of concerns and making applications more testable and maintainable. This comprehensive guide will walk you through implementing MVVM in Android applications using modern Android development practices.
+
+## What is MVVM?
+
+MVVM is an architectural pattern that separates an application into three main components:
+
+- **Model**: Represents the data and business logic
+- **View**: Handles the UI and user interactions
+- **ViewModel**: Manages the UI-related data and survives configuration changes
+
+### Benefits of MVVM
+
+- **Separation of Concerns**: Clear boundaries between UI, business logic, and data
+- **Testability**: Each component can be tested independently
+- **Maintainability**: Easier to modify and extend
+- **Lifecycle Awareness**: ViewModels survive configuration changes
+- **Data Binding**: Automatic UI updates when data changes
+
+## Setting Up MVVM
+
+### Dependencies
+
+Add the necessary dependencies to your `build.gradle` file:
+
+```gradle
+dependencies {
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
+    
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    
+    // Data Binding
+    implementation "androidx.databinding:databinding-runtime:$databinding_version"
+}
+```
+
+## Model Layer
+
+The Model layer represents your data and business logic. It should be independent of the UI.
+
+### Data Classes
+
+```kotlin
+data class User(
+    val id: Int,
+    val name: String,
+    val email: String,
+    val avatar: String
+)
+```
+
+### Repository Pattern
+
+```kotlin
+interface UserRepository {
+    suspend fun getUsers(): List<User>
+    suspend fun getUserById(id: Int): User?
+    suspend fun saveUser(user: User)
+}
+
+class UserRepositoryImpl(
+    private val apiService: ApiService,
+    private val userDao: UserDao
+) : UserRepository {
+    
+    override suspend fun getUsers(): List<User> {
+        return try {
+            val users = apiService.getUsers()
+            userDao.insertAll(users)
+            users
+        } catch (e: Exception) {
+            userDao.getAll()
+        }
+    }
+    
+    override suspend fun getUserById(id: Int): User? {
+        return userDao.getUserById(id)
+    }
+    
+    override suspend fun saveUser(user: User) {
+        userDao.insert(user)
+    }
+}
+```
+
+## ViewModel Layer
+
+The ViewModel manages UI-related data and survives configuration changes.
+
+### Basic ViewModel
+
+```kotlin
+class UserViewModel(
+    private val repository: UserRepository
+) : ViewModel() {
+    
+    private val _users = MutableLiveData<List<User>>()
+    val users: LiveData<List<User>> = _users
+    
+    private val _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean> = _loading
+    
+    private val _error = MutableLiveData<String>()
+    val error: LiveData<String> = _error
+    
+    fun loadUsers() {
+        viewModelScope.launch {
+            try {
+                _loading.value = true
+                _error.value = null
+                val userList = repository.getUsers()
+                _users.value = userList
+            } catch (e: Exception) {
+                _error.value = e.message
+            } finally {
+                _loading.value = false
+            }
+        }
+    }
+}
+```
+
+### ViewModel with StateFlow (Modern Approach)
+
+```kotlin
+class UserViewModel(
+    private val repository: UserRepository
+) : ViewModel() {
+    
+    private val _uiState = MutableStateFlow<UserUiState>(UserUiState.Loading)
+    val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
+    
+    fun loadUsers() {
+        viewModelScope.launch {
+            _uiState.value = UserUiState.Loading
+            try {
+                val users = repository.getUsers()
+                _uiState.value = UserUiState.Success(users)
+            } catch (e: Exception) {
+                _uiState.value = UserUiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+}
+
+sealed class UserUiState {
+    object Loading : UserUiState()
+    data class Success(val users: List<User>) : UserUiState()
+    data class Error(val message: String) : UserUiState()
+}
+```
+
+## View Layer
+
+The View layer handles UI rendering and user interactions.
+
+### Activity with ViewModel
+
+```kotlin
+class UserActivity : AppCompatActivity() {
+    
+    private lateinit var binding: ActivityUserBinding
+    private val viewModel: UserViewModel by viewModels {
+        UserViewModelFactory(UserRepositoryImpl(apiService, userDao))
+    }
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityUserBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        
+        setupObservers()
+        viewModel.loadUsers()
+    }
+    
+    private fun setupObservers() {
+        viewModel.users.observe(this) { users ->
+            // Update UI with users
+            updateUserList(users)
+        }
+        
+        viewModel.loading.observe(this) { isLoading ->
+            binding.progressBar.isVisible = isLoading
+        }
+        
+        viewModel.error.observe(this) { error ->
+            error?.let { showError(it) }
+        }
+    }
+    
+    private fun updateUserList(users: List<User>) {
+        // Update RecyclerView or other UI components
+    }
+    
+    private fun showError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+}
+```
+
+### Fragment with ViewModel
+
+```kotlin
+class UserFragment : Fragment() {
+    
+    private var _binding: FragmentUserBinding? = null
+    private val binding get() = _binding!!
+    
+    private val viewModel: UserViewModel by viewModels()
+    
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentUserBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
+        setupObservers()
+        viewModel.loadUsers()
+    }
+    
+    private fun setupObservers() {
+        viewModel.users.observe(viewLifecycleOwner) { users ->
+            updateUserList(users)
+        }
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
+```
+
+### Compose with ViewModel
+
+```kotlin
+@Composable
+fun UserScreen(
+    viewModel: UserViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    
+    LaunchedEffect(Unit) {
+        viewModel.loadUsers()
+    }
+    
+    when (uiState) {
+        is UserUiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is UserUiState.Success -> {
+            UserList(users = (uiState as UserUiState.Success).users)
+        }
+        is UserUiState.Error -> {
+            ErrorScreen(
+                message = (uiState as UserUiState.Error).message,
+                onRetry = { viewModel.loadUsers() }
+            )
+        }
+    }
+}
+
+@Composable
+fun UserList(users: List<User>) {
+    LazyColumn {
+        items(users) { user ->
+            UserItem(user = user)
+        }
+    }
+}
+
+@Composable
+fun UserItem(user: User) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = user.avatar,
+                contentDescription = "User avatar",
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+            )
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Column {
+                Text(
+                    text = user.name,
+                    style = MaterialTheme.typography.h6
+                )
+                Text(
+                    text = user.email,
+                    style = MaterialTheme.typography.body2
+                )
+            }
+        }
+    }
+}
+```
+
+## Data Binding
+
+Data binding allows you to bind UI components to data sources in your layout files.
+
+### Layout with Data Binding
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="user"
+            type="com.example.User" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{user.name}"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{user.email}"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+</layout>
+```
+
+### Using Data Binding in Activity
+
+```kotlin
+class UserDetailActivity : AppCompatActivity() {
+    
+    private lateinit var binding: ActivityUserDetailBinding
+    private val viewModel: UserViewModel by viewModels()
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityUserDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
+        
+        val userId = intent.getIntExtra("user_id", -1)
+        viewModel.loadUser(userId)
+    }
+}
+```
+
+## Dependency Injection
+
+Use dependency injection to provide ViewModels with their dependencies.
+
+### Hilt Integration
+
+```kotlin
+@HiltAndroidApp
+class MyApplication : Application()
+
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
+    
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        apiService: ApiService,
+        userDao: UserDao
+    ): UserRepository {
+        return UserRepositoryImpl(apiService, userDao)
+    }
+}
+
+@AndroidEntryPoint
+class UserActivity : AppCompatActivity() {
+    
+    private val viewModel: UserViewModel by viewModels()
+    
+    // ViewModel will be automatically injected
+}
+```
+
+### ViewModel with Hilt
+
+```kotlin
+@HiltViewModel
+class UserViewModel @Inject constructor(
+    private val repository: UserRepository
+) : ViewModel() {
+    // ViewModel implementation
+}
+```
+
+## Testing MVVM
+
+### Testing ViewModel
+
+```kotlin
+@RunWith(MockitoJUnitRunner::class)
+class UserViewModelTest {
+    
+    @Mock
+    private lateinit var repository: UserRepository
+    
+    private lateinit var viewModel: UserViewModel
+    
+    @Before
+    fun setup() {
+        viewModel = UserViewModel(repository)
+    }
+    
+    @Test
+    fun `loadUsers should update users when successful`() = runTest {
+        // Given
+        val users = listOf(User(1, "John", "john@example.com", ""))
+        whenever(repository.getUsers()).thenReturn(users)
+        
+        // When
+        viewModel.loadUsers()
+        
+        // Then
+        assertEquals(users, viewModel.users.value)
+    }
+    
+    @Test
+    fun `loadUsers should show error when failed`() = runTest {
+        // Given
+        val errorMessage = "Network error"
+        whenever(repository.getUsers()).thenThrow(Exception(errorMessage))
+        
+        // When
+        viewModel.loadUsers()
+        
+        // Then
+        assertEquals(errorMessage, viewModel.error.value)
+    }
+}
+```
+
+### Testing with Compose
+
+```kotlin
+@Test
+fun testUserScreen() {
+    val fakeViewModel = FakeUserViewModel()
+    
+    composeTestRule.setContent {
+        UserScreen(viewModel = fakeViewModel)
+    }
+    
+    // Test loading state
+    composeTestRule.onNodeWithTag("loading").assertIsDisplayed()
+    
+    // Test success state
+    fakeViewModel.setUsers(listOf(User(1, "John", "john@example.com", "")))
+    composeTestRule.onNodeWithText("John").assertIsDisplayed()
+}
+```
+
+## Best Practices
+
+### 1. **Single Responsibility**
+- Each ViewModel should handle one specific feature
+- Keep ViewModels focused and lightweight
+
+### 2. **State Management**
+- Use sealed classes for UI states
+- Handle all possible states (Loading, Success, Error)
+- Use StateFlow for modern apps
+
+### 3. **Error Handling**
+- Always handle errors gracefully
+- Provide meaningful error messages
+- Implement retry mechanisms
+
+### 4. **Testing**
+- Write unit tests for ViewModels
+- Test all UI states
+- Mock dependencies properly
+
+### 5. **Performance**
+- Use `viewModelScope` for coroutines
+- Avoid heavy operations in ViewModels
+- Use `LiveData` or `StateFlow` for reactive programming
+
+## Common Patterns
+
+### Shared ViewModel
+
+```kotlin
+class SharedViewModel : ViewModel() {
+    private val _selectedUser = MutableLiveData<User>()
+    val selectedUser: LiveData<User> = _selectedUser
+    
+    fun selectUser(user: User) {
+        _selectedUser.value = user
+    }
+}
+```
+
+### Event Handling
+
+```kotlin
+class UserViewModel : ViewModel() {
+    private val _events = MutableSharedFlow<UserEvent>()
+    val events: SharedFlow<UserEvent> = _events.asSharedFlow()
+    
+    fun onUserClick(user: User) {
+        viewModelScope.launch {
+            _events.emit(UserEvent.NavigateToDetail(user.id))
+        }
+    }
+}
+
+sealed class UserEvent {
+    data class NavigateToDetail(val userId: Int) : UserEvent()
+    data class ShowError(val message: String) : UserEvent()
+}
+```
+
+## Conclusion
+
+MVVM architecture provides a robust foundation for Android applications, offering:
+
+- **Clean separation of concerns**
+- **Improved testability**
+- **Better maintainability**
+- **Lifecycle awareness**
+- **Reactive programming support**
+
+By following the patterns and best practices outlined in this guide, you can build scalable, maintainable Android applications that are easy to test and extend. The combination of MVVM with modern Android development tools like Jetpack Compose, Hilt, and Kotlin Coroutines creates a powerful development experience.
+
+Remember to start simple and gradually add complexity as your application grows. The key is to maintain consistency and follow the established patterns throughout your codebase.

@@ -1,0 +1,645 @@
+---
+title: "Android Networking with Retrofit: Complete Guide to API Integration"
+description: "Learn how to implement efficient networking in Android applications using Retrofit, OkHttp, and modern networking patterns."
+image: android.png
+publishedAt: 2024-05-22 13:10:00
+updatedAt: 2024-05-22 13:10:00
+author: "Ritesh Sing"
+isPublished: true
+tags: 
+- android
+- retrofit
+- networking
+- api
+- http
+slug: android-networking-retrofit
+---
+
+Networking is a crucial aspect of modern Android applications. Retrofit, developed by Square, is the most popular HTTP client library for Android, providing a type-safe way to consume REST APIs. This comprehensive guide will walk you through implementing efficient networking in your Android apps using Retrofit and related libraries.
+
+## What is Retrofit?
+
+Retrofit is a type-safe HTTP client for Android and Java that makes it easy to consume REST APIs. It converts your HTTP API into a Java/Kotlin interface and handles the serialization and deserialization of request and response bodies.
+
+### Key Features
+
+- **Type-safe**: Compile-time verification of API calls
+- **Annotation-based**: Simple annotations define API endpoints
+- **Multiple serializers**: Support for JSON, XML, and custom formats
+- **Interceptors**: Easy request/response modification
+- **Coroutines support**: Built-in support for asynchronous operations
+
+## Setting Up Retrofit
+
+### Dependencies
+
+Add the necessary dependencies to your `build.gradle` file:
+
+```gradle
+dependencies {
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.retrofit2:converter-scalars:2.9.0"
+    
+    // OkHttp
+    implementation "com.squareup.okhttp3:okhttp:4.12.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.12.0"
+    
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+}
+```
+
+## Basic Setup
+
+### API Interface
+
+```kotlin
+interface ApiService {
+    
+    @GET("users")
+    suspend fun getUsers(): List<User>
+    
+    @GET("users/{id}")
+    suspend fun getUserById(@Path("id") userId: Int): User
+    
+    @POST("users")
+    suspend fun createUser(@Body user: User): User
+    
+    @PUT("users/{id}")
+    suspend fun updateUser(
+        @Path("id") userId: Int,
+        @Body user: User
+    ): User
+    
+    @DELETE("users/{id}")
+    suspend fun deleteUser(@Path("id") userId: Int): Response<Unit>
+    
+    @GET("users")
+    suspend fun getUsersWithQuery(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int = 10
+    ): List<User>
+}
+```
+
+### Data Classes
+
+```kotlin
+data class User(
+    val id: Int,
+    val name: String,
+    val email: String,
+    val avatar: String? = null,
+    val createdAt: String? = null
+)
+
+data class ApiResponse<T>(
+    val data: T,
+    val message: String,
+    val success: Boolean
+)
+
+data class PaginatedResponse<T>(
+    val data: List<T>,
+    val page: Int,
+    val totalPages: Int,
+    val totalItems: Int
+)
+```
+
+### Retrofit Instance
+
+```kotlin
+object RetrofitClient {
+    
+    private const val BASE_URL = "https://api.example.com/"
+    
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+    
+    private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .build()
+    
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    
+    val apiService: ApiService = retrofit.create(ApiService::class.java)
+}
+```
+
+## Advanced API Interface
+
+### Complex Endpoints
+
+```kotlin
+interface ApiService {
+    
+    // Query parameters
+    @GET("posts")
+    suspend fun getPosts(
+        @Query("category") category: String? = null,
+        @Query("author") author: String? = null,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 20
+    ): PaginatedResponse<Post>
+    
+    // Path parameters
+    @GET("users/{userId}/posts")
+    suspend fun getUserPosts(@Path("userId") userId: Int): List<Post>
+    
+    // Headers
+    @GET("profile")
+    suspend fun getProfile(@Header("Authorization") token: String): User
+    
+    // Form data
+    @FormUrlEncoded
+    @POST("login")
+    suspend fun login(
+        @Field("email") email: String,
+        @Field("password") password: String
+    ): LoginResponse
+    
+    // Multipart
+    @Multipart
+    @POST("upload")
+    suspend fun uploadFile(
+        @Part("description") description: RequestBody,
+        @Part file: MultipartBody.Part
+    ): UploadResponse
+    
+    // Custom headers
+    @Headers(
+        "Content-Type: application/json",
+        "Accept: application/json"
+    )
+    @POST("users")
+    suspend fun createUser(@Body user: User): User
+}
+```
+
+### Request/Response Models
+
+```kotlin
+data class Post(
+    val id: Int,
+    val title: String,
+    val content: String,
+    val authorId: Int,
+    val author: User? = null,
+    val tags: List<String> = emptyList(),
+    val createdAt: String,
+    val updatedAt: String
+)
+
+data class LoginResponse(
+    val token: String,
+    val user: User,
+    val expiresAt: String
+)
+
+data class UploadResponse(
+    val url: String,
+    val filename: String,
+    val size: Long
+)
+```
+
+## Error Handling
+
+### Custom Response Classes
+
+```kotlin
+sealed class ApiResult<T> {
+    data class Success<T>(val data: T) : ApiResult<T>()
+    data class Error<T>(val message: String, val code: Int? = null) : ApiResult<T>()
+    class Loading<T> : ApiResult<T>()
+}
+
+class ApiException(
+    val code: Int,
+    override val message: String
+) : Exception(message)
+```
+
+### Error Interceptor
+
+```kotlin
+class ErrorInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        val response = chain.proceed(request)
+        
+        when (response.code) {
+            401 -> throw ApiException(401, "Unauthorized")
+            403 -> throw ApiException(403, "Forbidden")
+            404 -> throw ApiException(404, "Not Found")
+            500 -> throw ApiException(500, "Internal Server Error")
+        }
+        
+        return response
+    }
+}
+```
+
+### Updated Retrofit Client
+
+```kotlin
+object RetrofitClient {
+    
+    private const val BASE_URL = "https://api.example.com/"
+    
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+    
+    private val errorInterceptor = ErrorInterceptor()
+    
+    private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
+        .addInterceptor(errorInterceptor)
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .build()
+    
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    
+    val apiService: ApiService = retrofit.create(ApiService::class.java)
+}
+```
+
+## Repository Pattern
+
+### Network Repository
+
+```kotlin
+class UserRepository(
+    private val apiService: ApiService,
+    private val userDao: UserDao
+) {
+    
+    suspend fun getUsers(): ApiResult<List<User>> {
+        return try {
+            val users = apiService.getUsers()
+            // Cache in local database
+            userDao.insertUsers(users)
+            ApiResult.Success(users)
+        } catch (e: Exception) {
+            // Try to get from local database
+            val localUsers = userDao.getAllUsers()
+            if (localUsers.isNotEmpty()) {
+                ApiResult.Success(localUsers)
+            } else {
+                ApiResult.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+    
+    suspend fun getUserById(id: Int): ApiResult<User> {
+        return try {
+            val user = apiService.getUserById(id)
+            userDao.insertUser(user)
+            ApiResult.Success(user)
+        } catch (e: Exception) {
+            val localUser = userDao.getUserById(id)
+            if (localUser != null) {
+                ApiResult.Success(localUser)
+            } else {
+                ApiResult.Error(e.message ?: "User not found")
+            }
+        }
+    }
+    
+    suspend fun createUser(user: User): ApiResult<User> {
+        return try {
+            val createdUser = apiService.createUser(user)
+            userDao.insertUser(createdUser)
+            ApiResult.Success(createdUser)
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Failed to create user")
+        }
+    }
+}
+```
+
+## Authentication
+
+### Token Management
+
+```kotlin
+class TokenManager(private val context: Context) {
+    
+    private val sharedPreferences = context.getSharedPreferences(
+        "auth_prefs", Context.MODE_PRIVATE
+    )
+    
+    fun saveToken(token: String) {
+        sharedPreferences.edit()
+            .putString("auth_token", token)
+            .apply()
+    }
+    
+    fun getToken(): String? {
+        return sharedPreferences.getString("auth_token", null)
+    }
+    
+    fun clearToken() {
+        sharedPreferences.edit()
+            .remove("auth_token")
+            .apply()
+    }
+}
+```
+
+### Authentication Interceptor
+
+```kotlin
+class AuthInterceptor(private val tokenManager: TokenManager) : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val originalRequest = chain.request()
+        
+        val token = tokenManager.getToken()
+        if (token != null) {
+            val newRequest = originalRequest.newBuilder()
+                .header("Authorization", "Bearer $token")
+                .build()
+            return chain.proceed(newRequest)
+        }
+        
+        return chain.proceed(originalRequest)
+    }
+}
+```
+
+### Updated Retrofit Client with Auth
+
+```kotlin
+object RetrofitClient {
+    
+    private const val BASE_URL = "https://api.example.com/"
+    
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+    
+    private val errorInterceptor = ErrorInterceptor()
+    
+    fun createApiService(tokenManager: TokenManager): ApiService {
+        val authInterceptor = AuthInterceptor(tokenManager)
+        
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .addInterceptor(errorInterceptor)
+            .addInterceptor(authInterceptor)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
+        
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        
+        return retrofit.create(ApiService::class.java)
+    }
+}
+```
+
+## File Upload
+
+### File Upload Implementation
+
+```kotlin
+interface FileUploadService {
+    
+    @Multipart
+    @POST("upload")
+    suspend fun uploadFile(
+        @Part file: MultipartBody.Part,
+        @Part("description") description: RequestBody
+    ): UploadResponse
+    
+    @Multipart
+    @POST("upload/multiple")
+    suspend fun uploadMultipleFiles(
+        @Part files: List<MultipartBody.Part>
+    ): List<UploadResponse>
+}
+
+class FileUploadRepository(private val uploadService: FileUploadService) {
+    
+    suspend fun uploadFile(
+        file: File,
+        description: String
+    ): ApiResult<UploadResponse> {
+        return try {
+            val requestFile = RequestBody.create(
+                MediaType.parse("image/*"), file
+            )
+            
+            val body = MultipartBody.Part.createFormData(
+                "file", file.name, requestFile
+            )
+            
+            val descriptionBody = RequestBody.create(
+                MediaType.parse("text/plain"), description
+            )
+            
+            val response = uploadService.uploadFile(body, descriptionBody)
+            ApiResult.Success(response)
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Upload failed")
+        }
+    }
+}
+```
+
+## Caching
+
+### Cache Interceptor
+
+```kotlin
+class CacheInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        
+        // Add cache headers for GET requests
+        if (request.method == "GET") {
+            val newRequest = request.newBuilder()
+                .header("Cache-Control", "public, max-age=300") // 5 minutes
+                .build()
+            return chain.proceed(newRequest)
+        }
+        
+        return chain.proceed(request)
+    }
+}
+
+class OfflineCacheInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        
+        if (!isNetworkAvailable()) {
+            val newRequest = request.newBuilder()
+                .header("Cache-Control", "public, only-if-cached, max-stale=86400")
+                .build()
+            return chain.proceed(newRequest)
+        }
+        
+        return chain.proceed(request)
+    }
+    
+    private fun isNetworkAvailable(): Boolean {
+        // Implement network availability check
+        return true
+    }
+}
+```
+
+## Testing
+
+### Mock API Service
+
+```kotlin
+class MockApiService : ApiService {
+    
+    override suspend fun getUsers(): List<User> {
+        return listOf(
+            User(1, "John Doe", "john@example.com"),
+            User(2, "Jane Smith", "jane@example.com")
+        )
+    }
+    
+    override suspend fun getUserById(userId: Int): User {
+        return User(userId, "Test User", "test@example.com")
+    }
+    
+    override suspend fun createUser(user: User): User {
+        return user.copy(id = 999)
+    }
+    
+    override suspend fun updateUser(userId: Int, user: User): User {
+        return user.copy(id = userId)
+    }
+    
+    override suspend fun deleteUser(userId: Int): Response<Unit> {
+        return Response.success(Unit)
+    }
+    
+    override suspend fun getUsersWithQuery(page: Int, limit: Int): List<User> {
+        return getUsers()
+    }
+}
+```
+
+### Network Testing
+
+```kotlin
+@RunWith(MockitoJUnitRunner::class)
+class UserRepositoryTest {
+    
+    @Mock
+    private lateinit var apiService: ApiService
+    
+    @Mock
+    private lateinit var userDao: UserDao
+    
+    private lateinit var repository: UserRepository
+    
+    @Before
+    fun setup() {
+        repository = UserRepository(apiService, userDao)
+    }
+    
+    @Test
+    fun `getUsers should return success with data`() = runTest {
+        // Given
+        val users = listOf(User(1, "John", "john@example.com"))
+        whenever(apiService.getUsers()).thenReturn(users)
+        
+        // When
+        val result = repository.getUsers()
+        
+        // Then
+        assertThat(result).isInstanceOf(ApiResult.Success::class.java)
+        assertThat((result as ApiResult.Success).data).isEqualTo(users)
+    }
+    
+    @Test
+    fun `getUsers should return cached data on network error`() = runTest {
+        // Given
+        val cachedUsers = listOf(User(1, "John", "john@example.com"))
+        whenever(apiService.getUsers()).thenThrow(Exception("Network error"))
+        whenever(userDao.getAllUsers()).thenReturn(cachedUsers)
+        
+        // When
+        val result = repository.getUsers()
+        
+        // Then
+        assertThat(result).isInstanceOf(ApiResult.Success::class.java)
+        assertThat((result as ApiResult.Success).data).isEqualTo(cachedUsers)
+    }
+}
+```
+
+## Best Practices
+
+### 1. **Use Repository Pattern**
+- Separate network logic from business logic
+- Handle caching and offline scenarios
+- Provide a clean API for data operations
+
+### 2. **Error Handling**
+- Implement proper error handling
+- Provide meaningful error messages
+- Handle network failures gracefully
+
+### 3. **Caching Strategy**
+- Cache responses for offline access
+- Implement cache invalidation
+- Use appropriate cache headers
+
+### 4. **Authentication**
+- Implement token-based authentication
+- Handle token refresh
+- Secure token storage
+
+### 5. **Testing**
+- Mock network responses
+- Test error scenarios
+- Test offline scenarios
+
+### 6. **Performance**
+- Use connection pooling
+- Implement request/response compression
+- Optimize image uploads
+
+## Conclusion
+
+Retrofit provides a powerful and efficient way to handle networking in Android applications. Its key benefits include:
+
+- **Type-safe API calls** with compile-time verification
+- **Easy integration** with other libraries
+- **Built-in support** for coroutines and reactive programming
+- **Comprehensive testing** capabilities
+- **Flexible configuration** for different use cases
+
+By following the patterns and best practices outlined in this guide, you can build robust, maintainable Android applications with efficient networking capabilities. Retrofit's integration with other Android libraries makes it the ideal choice for API integration in modern Android development.
+
+Remember to always handle network errors gracefully and provide a smooth user experience even when the network is unavailable.

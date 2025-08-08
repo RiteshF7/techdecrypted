@@ -1,0 +1,684 @@
+---
+title: "Android Dependency Injection with Hilt: Complete Guide"
+description: "Learn how to implement dependency injection in Android applications using Hilt, Google's recommended DI library for Android development."
+image: android.png
+publishedAt: 2024-05-25 10:30:00
+updatedAt: 2024-05-25 10:30:00
+author: "Ritesh Sing"
+isPublished: true
+tags: 
+- android
+- hilt
+- dependency-injection
+- di
+- architecture
+slug: android-dependency-injection-hilt
+---
+
+Dependency Injection (DI) is a design pattern that helps manage dependencies between components in your application. Hilt is Google's recommended dependency injection library for Android, built on top of Dagger. It simplifies the implementation of DI in Android applications and provides compile-time verification. This comprehensive guide will walk you through implementing Hilt in your Android projects.
+
+## What is Dependency Injection?
+
+Dependency Injection is a design pattern where dependencies are provided to a class from the outside, rather than the class creating them internally. This promotes loose coupling, testability, and maintainability.
+
+### Benefits of DI
+
+- **Loose Coupling**: Components depend on abstractions, not concrete implementations
+- **Testability**: Easy to mock dependencies for unit testing
+- **Maintainability**: Changes to dependencies don't affect dependent classes
+- **Reusability**: Dependencies can be reused across different components
+- **Lifecycle Management**: Automatic lifecycle management for Android components
+
+## Setting Up Hilt
+
+### Dependencies
+
+Add the necessary dependencies to your `build.gradle` file:
+
+```gradle
+plugins {
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+}
+
+dependencies {
+    implementation "com.google.dagger:hilt-android:2.48"
+    kapt "com.google.dagger:hilt-compiler:2.48"
+    
+    // Hilt with ViewModel
+    implementation "androidx.hilt:hilt-navigation-compose:1.1.0"
+    
+    // Hilt with WorkManager
+    implementation "androidx.hilt:hilt-work:1.1.0"
+    kapt "androidx.hilt:hilt-compiler:1.1.0"
+}
+```
+
+### Application Class
+
+```kotlin
+@HiltAndroidApp
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        // Initialize other libraries if needed
+    }
+}
+```
+
+## Basic Hilt Setup
+
+### Module Definition
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object AppModule {
+    
+    @Provides
+    @Singleton
+    fun provideApiService(): ApiService {
+        return Retrofit.Builder()
+            .baseUrl("https://api.example.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiService::class.java)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        apiService: ApiService,
+        userDao: UserDao
+    ): UserRepository {
+        return UserRepositoryImpl(apiService, userDao)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            "app_database"
+        ).build()
+    }
+    
+    @Provides
+    @Singleton
+    fun provideUserDao(database: AppDatabase): UserDao {
+        return database.userDao()
+    }
+}
+```
+
+### Activity with Hilt
+
+```kotlin
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
+    
+    private val viewModel: MainViewModel by viewModels()
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        
+        // ViewModel is automatically injected
+        viewModel.loadData()
+    }
+}
+```
+
+### ViewModel with Hilt
+
+```kotlin
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
+    
+    private val _users = MutableStateFlow<List<User>>(emptyList())
+    val users: StateFlow<List<User>> = _users.asStateFlow()
+    
+    fun loadUsers() {
+        viewModelScope.launch {
+            try {
+                val userList = userRepository.getUsers()
+                _users.value = userList
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+    }
+}
+```
+
+## Scopes in Hilt
+
+### Singleton Scope
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object SingletonModule {
+    
+    @Provides
+    @Singleton
+    fun provideApiService(): ApiService {
+        // This instance will be shared across the entire app
+        return createApiService()
+    }
+}
+```
+
+### Activity Scope
+
+```kotlin
+@Module
+@InstallIn(ActivityComponent::class)
+object ActivityModule {
+    
+    @Provides
+    fun provideActivityScopedService(): ActivityService {
+        // This instance will be shared within the activity
+        return ActivityService()
+    }
+}
+```
+
+### Fragment Scope
+
+```kotlin
+@Module
+@InstallIn(FragmentComponent::class)
+object FragmentModule {
+    
+    @Provides
+    fun provideFragmentScopedService(): FragmentService {
+        // This instance will be shared within the fragment
+        return FragmentService()
+    }
+}
+```
+
+## Qualifiers
+
+### Custom Qualifiers
+
+```kotlin
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class AuthInterceptorOkHttpClient
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class OtherInterceptorOkHttpClient
+
+@Module
+@InstallIn(SingletonComponent::class)
+object NetworkModule {
+    
+    @Provides
+    @Singleton
+    @AuthInterceptorOkHttpClient
+    fun provideAuthInterceptorOkHttpClient(
+        authInterceptor: AuthInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .build()
+    }
+    
+    @Provides
+    @Singleton
+    @OtherInterceptorOkHttpClient
+    fun provideOtherInterceptorOkHttpClient(
+        otherInterceptor: OtherInterceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(otherInterceptor)
+            .build()
+    }
+}
+```
+
+### Named Qualifiers
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object NetworkModule {
+    
+    @Provides
+    @Singleton
+    @Named("auth_client")
+    fun provideAuthOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor())
+            .build()
+    }
+    
+    @Provides
+    @Singleton
+    @Named("public_client")
+    fun providePublicOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .build()
+    }
+}
+```
+
+## Binds vs Provides
+
+### Using @Binds
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+    
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(
+        userRepositoryImpl: UserRepositoryImpl
+    ): UserRepository
+    
+    @Binds
+    @Singleton
+    abstract fun bindApiService(
+        apiServiceImpl: ApiServiceImpl
+    ): ApiService
+}
+```
+
+### Using @Provides
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object RepositoryModule {
+    
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        apiService: ApiService,
+        userDao: UserDao
+    ): UserRepository {
+        return UserRepositoryImpl(apiService, userDao)
+    }
+}
+```
+
+## Entry Points
+
+### Custom Entry Points
+
+```kotlin
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface UserRepositoryEntryPoint {
+    fun userRepository(): UserRepository
+}
+
+// Usage in a class that can't be injected
+class MyCustomClass {
+    fun doSomething(context: Context) {
+        val entryPoint = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            UserRepositoryEntryPoint::class.java
+        )
+        val userRepository = entryPoint.userRepository()
+        // Use userRepository
+    }
+}
+```
+
+## Hilt with Compose
+
+### Compose with Hilt
+
+```kotlin
+@Composable
+fun UserScreen(
+    viewModel: UserViewModel = hiltViewModel()
+) {
+    val users by viewModel.users.collectAsState()
+    
+    LazyColumn {
+        items(users) { user ->
+            UserItem(user = user)
+        }
+    }
+}
+
+@Composable
+fun UserItem(user: User) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = user.name,
+                style = MaterialTheme.typography.h6
+            )
+            Text(
+                text = user.email,
+                style = MaterialTheme.typography.body2
+            )
+        }
+    }
+}
+```
+
+### HiltViewModel in Compose
+
+```kotlin
+@HiltViewModel
+class UserViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
+    
+    private val _uiState = MutableStateFlow<UserUiState>(UserUiState.Loading)
+    val uiState: StateFlow<UserUiState> = _uiState.asStateFlow()
+    
+    init {
+        loadUsers()
+    }
+    
+    private fun loadUsers() {
+        viewModelScope.launch {
+            _uiState.value = UserUiState.Loading
+            try {
+                val users = userRepository.getUsers()
+                _uiState.value = UserUiState.Success(users)
+            } catch (e: Exception) {
+                _uiState.value = UserUiState.Error(e.message ?: "Unknown error")
+            }
+        }
+    }
+}
+
+sealed class UserUiState {
+    object Loading : UserUiState()
+    data class Success(val users: List<User>) : UserUiState()
+    data class Error(val message: String) : UserUiState()
+}
+```
+
+## Hilt with WorkManager
+
+### WorkManager with Hilt
+
+```kotlin
+@HiltWorker
+class DataSyncWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted workerParams: WorkerParameters,
+    private val userRepository: UserRepository
+) : CoroutineWorker(context, workerParams) {
+    
+    override suspend fun doWork(): Result {
+        return try {
+            userRepository.syncData()
+            Result.success()
+        } catch (e: Exception) {
+            Result.retry()
+        }
+    }
+}
+
+// Usage
+val dataSyncRequest = PeriodicWorkRequestBuilder<DataSyncWorker>(
+    15, TimeUnit.MINUTES
+).build()
+
+WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+    "data_sync",
+    ExistingPeriodicWorkPolicy.KEEP,
+    dataSyncRequest
+)
+```
+
+## Testing with Hilt
+
+### Test Module
+
+```kotlin
+@Module
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [AppModule::class]
+)
+object TestModule {
+    
+    @Provides
+    @Singleton
+    fun provideTestApiService(): ApiService {
+        return MockApiService()
+    }
+    
+    @Provides
+    @Singleton
+    fun provideTestDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.inMemoryDatabaseBuilder(
+            context,
+            AppDatabase::class.java
+        ).build()
+    }
+}
+```
+
+### Test Application
+
+```kotlin
+@HiltAndroidApp
+class TestApplication : Application()
+```
+
+### Test Activity
+
+```kotlin
+@HiltAndroidTest
+class MainActivityTest {
+    
+    @get:Rule
+    val hiltRule = HiltAndroidRule(this)
+    
+    @Before
+    fun setup() {
+        hiltRule.inject()
+    }
+    
+    @Test
+    fun testMainActivity() {
+        // Your test implementation
+    }
+}
+```
+
+### Unit Testing
+
+```kotlin
+@RunWith(MockitoJUnitRunner::class)
+class UserViewModelTest {
+    
+    @Mock
+    private lateinit var userRepository: UserRepository
+    
+    private lateinit var viewModel: UserViewModel
+    
+    @Before
+    fun setup() {
+        viewModel = UserViewModel(userRepository)
+    }
+    
+    @Test
+    fun `loadUsers should update uiState to success`() = runTest {
+        // Given
+        val users = listOf(User(1, "John", "john@example.com"))
+        whenever(userRepository.getUsers()).thenReturn(users)
+        
+        // When
+        viewModel.loadUsers()
+        
+        // Then
+        val uiState = viewModel.uiState.value
+        assertThat(uiState).isInstanceOf(UserUiState.Success::class.java)
+        assertThat((uiState as UserUiState.Success).users).isEqualTo(users)
+    }
+}
+```
+
+## Advanced Patterns
+
+### Multi-Module Setup
+
+```kotlin
+// Core module
+@Module
+@InstallIn(SingletonComponent::class)
+object CoreModule {
+    @Provides
+    @Singleton
+    fun provideCoreService(): CoreService {
+        return CoreServiceImpl()
+    }
+}
+
+// Feature module
+@Module
+@InstallIn(SingletonComponent::class)
+object FeatureModule {
+    @Provides
+    @Singleton
+    fun provideFeatureService(
+        coreService: CoreService
+    ): FeatureService {
+        return FeatureServiceImpl(coreService)
+    }
+}
+```
+
+### Conditional Injection
+
+```kotlin
+@Module
+@InstallIn(SingletonComponent::class)
+object ConditionalModule {
+    
+    @Provides
+    @Singleton
+    fun provideApiService(
+        @ApplicationContext context: Context
+    ): ApiService {
+        return if (BuildConfig.DEBUG) {
+            MockApiService()
+        } else {
+            RealApiService()
+        }
+    }
+}
+```
+
+### Custom Scopes
+
+```kotlin
+@Scope
+@Retention(AnnotationRetention.BINARY)
+annotation class UserScope
+
+@Module
+@InstallIn(SingletonComponent::class)
+object UserModule {
+    
+    @Provides
+    @UserScope
+    fun provideUserService(): UserService {
+        return UserServiceImpl()
+    }
+}
+```
+
+## Best Practices
+
+### 1. **Use Appropriate Scopes**
+- Use `@Singleton` for truly global dependencies
+- Use `@ActivityScoped` for activity-level dependencies
+- Use `@FragmentScoped` for fragment-level dependencies
+
+### 2. **Prefer @Binds over @Provides**
+- Use `@Binds` for interface implementations
+- Use `@Provides` for complex object creation
+
+### 3. **Use Qualifiers**
+- Use qualifiers to distinguish between similar dependencies
+- Use descriptive names for qualifiers
+
+### 4. **Keep Modules Focused**
+- Create separate modules for different features
+- Keep modules small and focused
+
+### 5. **Testing**
+- Create test modules for testing
+- Use `@TestInstallIn` to replace production modules
+- Mock dependencies in unit tests
+
+### 6. **Error Handling**
+- Handle injection errors gracefully
+- Provide meaningful error messages
+- Use proper error handling in ViewModels
+
+## Common Issues and Solutions
+
+### Circular Dependencies
+
+```kotlin
+// Problem: Circular dependency
+class ServiceA @Inject constructor(private val serviceB: ServiceB)
+class ServiceB @Inject constructor(private val serviceA: ServiceA)
+
+// Solution: Use @Lazy or restructure
+class ServiceA @Inject constructor(
+    private val serviceB: Lazy<ServiceB>
+)
+```
+
+### Missing Dependencies
+
+```kotlin
+// Problem: Missing dependency
+@HiltViewModel
+class MyViewModel @Inject constructor(
+    private val missingService: MissingService // This will cause compilation error
+) : ViewModel()
+
+// Solution: Provide the missing dependency in a module
+@Module
+@InstallIn(SingletonComponent::class)
+object MissingModule {
+    @Provides
+    @Singleton
+    fun provideMissingService(): MissingService {
+        return MissingServiceImpl()
+    }
+}
+```
+
+## Conclusion
+
+Hilt provides a powerful and efficient way to implement dependency injection in Android applications. Its key benefits include:
+
+- **Compile-time verification** of dependency graphs
+- **Automatic lifecycle management** for Android components
+- **Easy testing** with test modules
+- **Integration** with other Android libraries
+- **Reduced boilerplate** compared to manual DI
+
+By following the patterns and best practices outlined in this guide, you can build maintainable, testable Android applications with proper dependency management. Hilt's integration with other Android Jetpack components makes it the ideal choice for dependency injection in modern Android development.
+
+Remember to always consider the scope of your dependencies and use appropriate qualifiers to avoid conflicts. Proper testing setup is crucial for maintaining code quality and reliability.
