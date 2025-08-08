@@ -7,7 +7,7 @@ const siteMetadata = {
     language: 'en-us',
     theme: 'system', // system, dark or light
     siteUrl: 'https://create-blog-with-nextjs.vercel.app', // your website URL
-    siteLogo: '/logo.png',
+    siteLogo: '/site-logo.jpg',
     socialBanner: '/social-banner.png', // add social banner in the public folder
     email: 'iamritesh.dev@gmail.com', 
     github: 'https://www.github.com/riteshf7',
