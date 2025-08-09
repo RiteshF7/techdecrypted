@@ -176,18 +176,18 @@ export default async function BlogPage({ params }) {
 
         <div className="relative z-10">
           {/* Main content layout */}
-          <div className="w-full">
-            <div className="flex max-w-7xl mx-auto">
+          <div className="w-full px-20 pt-5">
+            <div className="flex max-w-full">
               
               {/* Left Sidebar - Table of Contents */}
-              <div className="hidden lg:block w-64 flex-shrink-0">
-                <div className="sticky top-24 h-screen overflow-y-auto p-6">
-                  <div className="bg-white/60 dark:bg-black/20 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-white/10 shadow-lg p-4">
+              {/* <div className="hidden lg:block w-56 flex-shrink-0"> */}
+                {/* <div className="sticky top-24 h-screen overflow-y-auto p-3">
+                  <div className="bg-white/60 dark:bg-black/20 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-white/10 shadow-lg p-3">
                     
-                    <h3 className="font-semibold text-base text-gray-800 dark:text-gray-200 mb-4 pb-3 border-b border-gray-200/50 dark:border-gray-700/50">
+                    <h3 className="font-semibold text-base text-gray-800 dark:text-gray-200 mb-3 pb-2 border-b border-gray-200/50 dark:border-gray-700/50">
                       Contents
-                    </h3>
-
+                    </h3> */}
+{/* 
                     {blog.toc && blog.toc.length > 0 ? (
                       <nav className="max-h-[60vh] overflow-y-auto">
                         <ul className="space-y-1">
@@ -200,30 +200,33 @@ export default async function BlogPage({ params }) {
                       <p className="text-gray-500 dark:text-gray-400 text-xs">
                         No sections
                       </p>
-                    )}
+                    )} */}
 
                     {/* Progress indicator */}
-                    <div className="mt-4 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
+                    {/* <div className="mt-3 pt-2 border-t border-gray-200/50 dark:border-gray-700/50">
                       <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                         <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></div>
                         <span>Reading</span>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
+                  </div> */}
+                {/* </div>
+              </div> */}
+
+
+
 
               {/* Main Content Area - Optimized width */}
-              <div className="flex-1 min-w-0 max-w-4xl">
-                <div className="px-6 lg:px-8 py-8">
+              <div className="flex-1 min-w-0 lg:ml-3">
+                <div className="px-3 py-3">
                   <div className="bg-white/80 dark:bg-black/40 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-white/10 shadow-2xl overflow-hidden">
                     
                     {/* Integrated Blog Details Header */}
-                    <div className="px-8 lg:px-12 py-8 border-b border-gray-100/50 dark:border-gray-800/50 bg-gradient-to-r from-indigo-50/30 via-white/30 to-purple-50/30 dark:from-indigo-950/20 dark:via-black/20 dark:to-purple-950/20">
+                    <div className="px-12 py-12 border-b border-gray-100/50 dark:border-gray-800/50 bg-gradient-to-r from-indigo-50/30 via-white/30 to-purple-50/30 dark:from-indigo-950/20 dark:via-black/20 dark:to-purple-950/20">
                       
                       {/* Title and Description */}
-                      <div className="mb-8">
-                        <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4 leading-tight">
+                      <div className="mb-6">
+                        <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-3 leading-tight">
                           {blog.title}
                         </h1>
                         {blog.description && (
@@ -234,11 +237,11 @@ export default async function BlogPage({ params }) {
                       </div>
 
                       {/* Metadata Section */}
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         
                         {/* Date and Reading Time */}
-                        <div className="flex items-center gap-6">
-                          <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-2">
                             <div className="p-2 rounded-xl bg-indigo-100 dark:bg-indigo-900/30">
                               <CalendarIcon className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                             </div>
@@ -252,7 +255,7 @@ export default async function BlogPage({ params }) {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2">
                             <div className="p-2 rounded-xl bg-purple-100 dark:bg-purple-900/30">
                               <ClockIcon className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                             </div>
@@ -271,7 +274,7 @@ export default async function BlogPage({ params }) {
                         <div className="flex items-center">
                           <Link 
                             href={`/categories/${slugify(blog.tags[0])}`}
-                            className="group inline-flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-pink-100 to-rose-100 dark:from-pink-900/30 dark:to-rose-900/30 hover:from-pink-200 hover:to-rose-200 dark:hover:from-pink-900/50 dark:hover:to-rose-900/50 rounded-xl border border-pink-200/50 dark:border-pink-800/30 transition-all duration-300 hover:scale-105"
+                            className="group inline-flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-pink-100 to-rose-100 dark:from-pink-900/30 dark:to-rose-900/30 hover:from-pink-200 hover:to-rose-200 dark:hover:from-pink-900/50 dark:hover:to-rose-900/50 rounded-xl border border-pink-200/50 dark:border-pink-800/30 transition-all duration-300 hover:scale-105"
                           >
                             <div className="p-1 rounded-lg bg-pink-200 dark:bg-pink-800/50">
                               <TagIcon className="w-3 h-3 text-pink-600 dark:text-pink-400" />
@@ -289,11 +292,11 @@ export default async function BlogPage({ params }) {
                       </div>
 
                       {/* Bottom gradient line */}
-                      <div className="mt-8 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full"></div>
+                      <div className="mt-6 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full"></div>
                     </div>
 
                     {/* Article Content */}
-                    <div className="px-8 lg:px-12 py-12">
+                    <div className="px-14 py-14">
                       <div className="prose prose-xl prose-gray dark:prose-invert max-w-none
                         prose-headings:text-gray-900 dark:prose-headings:text-gray-100
                         prose-headings:font-bold prose-headings:leading-tight
@@ -339,11 +342,11 @@ export default async function BlogPage({ params }) {
                     </div>
 
                     {/* Beautiful Footer */}
-                    <div className="px-8 lg:px-12 py-8 bg-gradient-to-r from-gray-50/50 via-white/50 to-indigo-50/50 dark:from-gray-950/30 dark:via-black/30 dark:to-purple-950/30 border-t border-gray-100/50 dark:border-gray-800/50">
+                    <div className="px-6 py-6 bg-gradient-to-r from-gray-50/50 via-white/50 to-indigo-50/50 dark:from-gray-950/30 dark:via-black/30 dark:to-purple-950/30 border-t border-gray-100/50 dark:border-gray-800/50">
                       
                       {/* Completion Status */}
-                      <div className="flex items-center justify-center mb-6">
-                        <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-full border border-green-200/50 dark:border-green-800/30">
+                      <div className="flex items-center justify-center mb-4">
+                        <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-full border border-green-200/50 dark:border-green-800/30">
                           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                           <span className="text-sm font-medium text-green-700 dark:text-green-300">Article completed • Thank you for reading!</span>
                         </div>
@@ -351,23 +354,23 @@ export default async function BlogPage({ params }) {
 
                       {/* Tags Section */}
                       <div className="text-center">
-                        <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-4 uppercase tracking-wide">
+                        <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-3 uppercase tracking-wide">
                           Related Topics
                         </h4>
-                        <div className="flex flex-wrap justify-center gap-3">
+                        <div className="flex flex-wrap justify-center gap-2">
                           {blog.tags && blog.tags.map((tag, index) => (
                             <Tag
                               key={index}
                               link={`/categories/${slugify(tag)}`}
                               name={tag}
-                              className="px-4 py-2 text-sm bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 text-indigo-700 dark:text-indigo-300 rounded-full border border-indigo-200/50 dark:border-indigo-800/30 hover:scale-105 hover:shadow-lg transition-all duration-200 font-medium"
+                              className="px-3 py-1 text-sm bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 text-indigo-700 dark:text-indigo-300 rounded-full border border-indigo-200/50 dark:border-indigo-800/30 hover:scale-105 hover:shadow-lg transition-all duration-200 font-medium"
                             />
                           ))}
                         </div>
                       </div>
 
                       {/* Bottom decorative line */}
-                      <div className="mt-8 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full"></div>
+                      <div className="mt-6 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full"></div>
                     </div>
                   </div>
                 </div>
