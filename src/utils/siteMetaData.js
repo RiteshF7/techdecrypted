@@ -5,7 +5,7 @@ const siteMetadata = {
     headerTitle: 'Android Blog',
     description: 'A blog spot for android developers',
     language: 'en-us',
-    theme: 'dark', // system, dark or light
+    theme: 'light', // system, dark or light
     siteUrl: 'https://create-blog-with-nextjs.vercel.app', // your website URL
     siteLogo: '/site-logo.jpg',
     socialBanner: '/social-banner.jpg', // add social banner in the public folder
