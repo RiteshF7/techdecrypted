@@ -12,17 +12,31 @@ const HomeCoverSection = ({ blogs }) => {
 
   try {
     if (blogs && Array.isArray(blogs) && blogs.length > 0) {
-      sortedBlogs = sortBlogs(blogs);
-      blog = sortedBlogs[0];
+      // First, try to find a homeCover blog
+      const homeCoverBlog = blogs.find(b => b.homeCover && b.isPublished);
+      if (homeCoverBlog) {
+        blog = homeCoverBlog;
+      } else {
+        // Fallback to most recent published blog
+        sortedBlogs = sortBlogs(blogs);
+        blog = sortedBlogs[0];
+      }
     }
   } catch (error) {
     console.warn('Error sorting blogs:', error);
     // Fallback sorting if sortBlogs fails
     if (blogs && Array.isArray(blogs) && blogs.length > 0) {
-      sortedBlogs = blogs
-        .filter(b => b && b.isPublished)
-        .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
-      blog = sortedBlogs[0];
+      // First try to find a homeCover blog
+      const homeCoverBlog = blogs.find(b => b.homeCover && b.isPublished);
+      if (homeCoverBlog) {
+        blog = homeCoverBlog;
+      } else {
+        // Fallback to most recent published blog
+        sortedBlogs = blogs
+          .filter(b => b && b.isPublished)
+          .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+        blog = sortedBlogs[0];
+      }
     }
   }
 
@@ -57,7 +71,7 @@ const HomeCoverSection = ({ blogs }) => {
       {/* Section Header */}
       <div className="mb-12">
         <h2 className="font-bold text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl capitalize mb-6">
-          Featured Story
+          Home Cover Story
         </h2>
         <p className="font-medium text-lg xs:text-xl sm:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl">
           Dive into the latest insights, tutorials, and innovations in technology and development.
@@ -133,7 +147,7 @@ const HomeCoverSection = ({ blogs }) => {
                   </>
                 )}
                 <span>•</span>
-                <span>Featured Story</span>
+                <span>Home Cover Story</span>
                 {blog.readingTime?.text && (
                   <>
                     <span>•</span>
@@ -150,13 +164,13 @@ const HomeCoverSection = ({ blogs }) => {
           <div className='flex items-center justify-between text-xs text-gray-600 dark:text-gray-400'>
             <div className='flex items-center gap-4'>
               <span>•</span>
-              <span>Latest Featured Content</span>
+              <span>Latest Home Cover Content</span>
               <span>•</span>
               <span>Full Screen Experience</span>
               <span>•</span>
               <span>{blog.readingTime.text}</span>
               <span>•</span>
-              <span>Featured</span>
+              <span>Home Cover</span>
             
             </div>
 

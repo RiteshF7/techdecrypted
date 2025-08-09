@@ -20,6 +20,8 @@ const blog = s
     description: s.string(), 
     image: s.image(),
     isPublished: s.boolean().default(true),
+    featured: s.boolean().default(false), // For featured posts
+    homeCover: s.boolean().default(false), // For home cover section posts
     author: s.string(),
     tags: s.array(s.string()),
     body: s.mdx(),

@@ -15,7 +15,19 @@ const FeaturedPosts = ({ blogs, maxPosts = 6 }) => {
   let sortedBlogs = [];
   try {
     if (blogs && Array.isArray(blogs)) {
-      sortedBlogs = sortBlogs(blogs);
+      // First, filter to only show featured and published blogs
+      const featuredBlogs = blogs.filter(blog => blog && blog.featured && blog.isPublished);
+      
+      if (featuredBlogs.length > 0) {
+        // Sort featured blogs by publishedAt date (most recent first)
+        sortedBlogs = featuredBlogs.sort((a, b) => 
+          new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0)
+        );
+      } else {
+        // Fallback to regular sorting if no featured blogs
+        sortedBlogs = sortBlogs(blogs);
+      }
+      
       // Ensure we don't exceed the maxPosts limit
       if (sortedBlogs.length > maxPosts) {
         sortedBlogs = sortedBlogs.slice(0, maxPosts);
@@ -25,10 +37,19 @@ const FeaturedPosts = ({ blogs, maxPosts = 6 }) => {
     console.warn('Error sorting blogs:', error);
     // Fallback sorting if sortBlogs fails
     if (blogs && Array.isArray(blogs)) {
-      sortedBlogs = blogs
-        .filter(blog => blog && blog.isPublished)
-        .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0))
-        .slice(0, maxPosts); // Apply maxPosts limit here too
+      // First try to find featured blogs
+      const featuredBlogs = blogs.filter(blog => blog && blog.featured && blog.isPublished);
+      if (featuredBlogs.length > 0) {
+        sortedBlogs = featuredBlogs
+          .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0))
+          .slice(0, maxPosts);
+      } else {
+        // Fallback to regular sorting
+        sortedBlogs = blogs
+          .filter(blog => blog && blog.isPublished)
+          .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0))
+          .slice(0, maxPosts);
+      }
     }
   }
 
@@ -103,7 +124,7 @@ const FeaturedPosts = ({ blogs, maxPosts = 6 }) => {
               </span>
               <span className="text-gray-400">•</span>
               <span className="px-3 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full">
-                Latest Updates
+                {blogs.filter(b => b && b.featured && b.isPublished).length} Total Featured
               </span>
               <span className="text-gray-400">•</span>
               <span className="px-3 py-2 bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 rounded-full">
