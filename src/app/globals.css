@@ -2,8 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-html{
+/* Force dark mode - prevent light mode */
+html {
     scroll-behavior: smooth;
+}
+
+html.dark {
+    color-scheme: dark;
+}
+
+/* Ensure dark mode is always applied */
+html:not(.dark) {
+    color-scheme: dark;
 }
 
 h1>a>.icon.icon-link:before,

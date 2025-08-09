@@ -64,11 +64,40 @@ export default function RootLayout({ children }) {
         )}
       >
         <Script id="theme-switcher" strategy="beforeInteractive">
-          {`if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    document.documentElement.classList.add('dark')
-  } else {
-    document.documentElement.classList.remove('dark')
-  }`}
+          {`// Force dark mode - never allow light mode
+          document.documentElement.classList.add('dark');
+          document.documentElement.classList.remove('light');
+          localStorage.setItem('theme', 'dark');`}
+        </Script>
+        <Script id="theme-enforcer" strategy="afterInteractive">
+          {`// Enforce dark mode on every page load and prevent changes
+          function enforceDarkMode() {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+            localStorage.setItem('theme', 'dark');
+          }
+          
+          // Run immediately
+          enforceDarkMode();
+          
+          // Run periodically to ensure it stays
+          setInterval(enforceDarkMode, 1000);
+          
+          // Override any attempts to remove dark mode
+          const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                if (!document.documentElement.classList.contains('dark')) {
+                  enforceDarkMode();
+                }
+              }
+            });
+          });
+          
+          observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class']
+          });`}
         </Script>
         <Header />
         {children}
