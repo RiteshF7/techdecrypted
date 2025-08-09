@@ -27,11 +27,17 @@ const HeroSection = () => {
         <h2 className='font-bold capitalize text-4xl xs:text-5xl sxl:text-6xl text-center lg:text-left'>
         I want to be one of the greats.
         </h2>
-        <p className='font-medium capitalize mt-4 text-base'>
-        Few are blessed to live their passion as their profession.
-            I consider it a privilege and one I refuse to waste.
-            I want to become one of the greats and I won't stop until I do.
-        </p>
+        <p className="font-medium capitalize mt-4 text-base">
+  I'm deeply passionate about technology and the Android ecosystem.<br />
+  Whether it's exploring the latest Jetpack Compose APIs, optimizing app performance,
+  or experimenting with new tools and frameworks.<br /><br />
+  I thrive on pushing boundaries and creating meaningful products.<br />
+  I love building things especially when they make life smoother,<br />
+  smarter, or just more delightful.<br /><br />
+  Few are blessed to live their passion as their profession.<br />
+  I consider it a privilege and one I refuse to waste.<br />
+  I want to become one of the greats and I won't stop until I do.
+</p>
         <button 
           onClick={handleResumeDownload}
           className="mt-6 bg-dark dark:bg-light text-light dark:text-dark px-6 py-3 rounded font-medium hover:bg-gray-700 dark:hover:bg-gray-200 transition-all duration-300"
