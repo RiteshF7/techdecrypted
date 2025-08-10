@@ -176,7 +176,7 @@ export default async function BlogPage({ params }) {
 
         <div className="relative z-10">
           {/* Main content layout */}
-          <div className="w-full px-20 pt-5">
+          <div className="w-full px-4 sm:px-6 lg:px-8 pt-5">
             <div className="flex max-w-full">
               
               {/* Left Sidebar - Table of Contents */}
@@ -222,7 +222,7 @@ export default async function BlogPage({ params }) {
                   <div className="bg-white/80 dark:bg-black/40 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-white/10 shadow-2xl overflow-hidden">
                     
                     {/* Integrated Blog Details Header */}
-                    <div className="px-12 py-12 border-b border-gray-100/50 dark:border-gray-800/50 bg-gradient-to-r from-indigo-50/30 via-white/30 to-purple-50/30 dark:from-indigo-950/20 dark:via-black/20 dark:to-purple-950/20">
+                    <div className="px-6 sm:px-8 md:px-12 py-8 sm:py-10 md:py-12 border-b border-gray-100/50 dark:border-gray-800/50 bg-gradient-to-r from-indigo-50/30 via-white/30 to-purple-50/30 dark:from-indigo-950/20 dark:via-black/20 dark:to-purple-950/20">
                       
                       {/* Title and Description */}
                       <div className="mb-6">
@@ -296,7 +296,7 @@ export default async function BlogPage({ params }) {
                     </div>
 
                     {/* Article Content */}
-                    <div className="px-14 py-14">
+                    <div className="px-6 sm:px-8 md:px-14 py-8 sm:py-10 md:py-14">
                       <div className="prose prose-xl prose-gray dark:prose-invert max-w-none
                         prose-headings:text-gray-900 dark:prose-headings:text-gray-100
                         prose-headings:font-bold prose-headings:leading-tight
