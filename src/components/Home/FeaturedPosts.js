@@ -16,12 +16,12 @@ const FeaturedPosts = ({ blogs, maxPosts = 6 }) => {
   try {
     if (blogs && Array.isArray(blogs)) {
       // First, filter to only show featured and published blogs
-      const featuredBlogs = blogs.filter(blog => blog && blog.featured && blog.isPublished);
+      const featuredBlogs = blogs.filter(blog => blog && blog.featured && blog.is_published);
       
       if (featuredBlogs.length > 0) {
         // Sort featured blogs by publishedAt date (most recent first)
         sortedBlogs = featuredBlogs.sort((a, b) => 
-          new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0)
+          new Date(b.published_at || 0) - new Date(a.published_at || 0)
         );
       } else {
         // Fallback to regular sorting if no featured blogs
@@ -38,16 +38,16 @@ const FeaturedPosts = ({ blogs, maxPosts = 6 }) => {
     // Fallback sorting if sortBlogs fails
     if (blogs && Array.isArray(blogs)) {
       // First try to find featured blogs
-      const featuredBlogs = blogs.filter(blog => blog && blog.featured && blog.isPublished);
+      const featuredBlogs = blogs.filter(blog => blog && blog.featured && blog.is_published);
       if (featuredBlogs.length > 0) {
         sortedBlogs = featuredBlogs
-          .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0))
+          .sort((a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0))
           .slice(0, maxPosts);
       } else {
         // Fallback to regular sorting
         sortedBlogs = blogs
-          .filter(blog => blog && blog.isPublished)
-          .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0))
+          .filter(blog => blog && blog.is_published)
+          .sort((a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0))
           .slice(0, maxPosts);
       }
     }

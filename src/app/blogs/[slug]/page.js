@@ -2,25 +2,32 @@ import { format, parseISO } from "date-fns";
 import RenderMdx from "@/src/components/Blog/RenderMdx";
 import Tag from "@/src/components/Elements/Tag";
 import siteMetadata from "@/src/utils/siteMetaData";
-import { blogs } from '@/.velite/generated';
+import { supabase } from "@/src/utils/supabase";
 import { slug as slugify } from "github-slugger";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import PropTypes from "prop-types";
+import ViewCounter from "@/src/components/Blog/ViewCounter";
 
 export async function generateStaticParams() {
-  return blogs.map((blog) => ({ slug: blog.slug }));
+  const { data: blogs } = await supabase.from("blogs").select("slug");
+  return blogs?.map((blog) => ({ slug: blog.slug })) || [];
 }
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const blog = blogs.find((blog) => blog.slug === slug);
+  const { data: blog } = await supabase
+    .from("blogs")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+
   if (!blog) {
     return {};
   }
 
-  const publishedAt = new Date(blog.publishedAt).toISOString();
-  const modifiedAt = new Date(blog.updatedAt || blog.publishedAt).toISOString();
+  const publishedAt = new Date(blog.published_at).toISOString();
+  const modifiedAt = new Date(blog.updated_at || blog.published_at).toISOString();
 
   let imageList = [siteMetadata.socialBanner];
   if (blog.image?.src) {
@@ -126,7 +133,11 @@ TableOfContentsItem.propTypes = {
 
 export default async function BlogPage({ params }) {
   const { slug } = await params;
-  const blog = blogs.find((blog) => blog.slug === slug);
+  const { data: blog } = await supabase
+    .from("blogs")
+    .select("*")
+    .eq("slug", slug)
+    .single();
 
   if (!blog) {
     notFound();
@@ -146,8 +157,8 @@ export default async function BlogPage({ params }) {
     "headline": blog.title,
     "description": blog.description,
     "image": imageList,
-    "datePublished": new Date(blog.publishedAt).toISOString(),
-    "dateModified": new Date(blog.updatedAt || blog.publishedAt).toISOString(),
+    "datePublished": new Date(blog.published_at).toISOString(),
+    "dateModified": new Date(blog.updated_at || blog.published_at).toISOString(),
     "author": [
       {
         "@type": "Person",
@@ -250,7 +261,7 @@ export default async function BlogPage({ params }) {
                                 Published
                               </div>
                               <time className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                                {format(parseISO(blog.publishedAt), "LLLL d, yyyy")}
+                                {format(parseISO(blog.published_at), "LLLL d, yyyy")}
                               </time>
                             </div>
                           </div>
@@ -264,10 +275,11 @@ export default async function BlogPage({ params }) {
                                 Reading Time
                               </div>
                               <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                                {blog.readingTime.text}
+                                {readingTime(blog.body).text}
                               </span>
                             </div>
                           </div>
+                          <ViewCounter slug={slug} />
                         </div>
 
                         {/* Category */}

@@ -53,7 +53,7 @@ const ContactSection = () => {
         Get In Touch
         </h2>
         <p className="font-medium text-lg xs:text-xl sm:text-2xl mt-4 text-gray-300">
-        Feel free to reach out to me via any of the listed mediums. I'm always open to discussing new opportunities, 
+        Feel free to reach out to me via any of the listed mediums. I&apos;m always open to discussing new opportunities,
         collaborations, or just having a chat about technology and innovation.
         </p>
       </div>

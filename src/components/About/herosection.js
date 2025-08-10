@@ -28,15 +28,15 @@ const HeroSection = () => {
         I want to be one of the greats.
         </h2>
         <p className="font-medium capitalize mt-4 text-base">
-  I'm deeply passionate about technology and the Android ecosystem.<br />
-  Whether it's exploring the latest Jetpack Compose APIs, optimizing app performance,
+  I&apos;m deeply passionate about technology and the Android ecosystem.<br />
+  Whether it&apos;s exploring the latest Jetpack Compose APIs, optimizing app performance,
   or experimenting with new tools and frameworks.<br /><br />
   I thrive on pushing boundaries and creating meaningful products.<br />
   I love building things especially when they make life smoother,<br />
   smarter, or just more delightful.<br /><br />
   Few are blessed to live their passion as their profession.<br />
   I consider it a privilege and one I refuse to waste.<br />
-  I want to become one of the greats and I won't stop until I do.
+  I want to become one of the greats and I won&apos;t stop until I do.
 </p>
         <button 
           onClick={handleResumeDownload}
