@@ -43,11 +43,11 @@ const HomeCoverSection = ({ blogs }) => {
   // Handle case when no blog is available
   if (!blog) {
     return (
-      <section className='w-full p-5 xs:p-10 sm:p-12 md:p-16 lg:p-20 border-b-2 border-solid border-dark dark:border-light text-dark dark:text-light'>
+      <section className='w-full p-4 xs:p-6 sm:p-8 md:p-12 lg:p-16 border-b-2 border-solid border-dark dark:border-light text-dark dark:text-light'>
         <div className='h-[60vh] sm:h-[85vh] flex items-center justify-center border-2 border-dashed border-gray-400 dark:border-gray-600 rounded-lg'>
           <div className='text-center'>
-            <h1 className='font-bold text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl capitalize mb-6'>No Featured Post Available</h1>
-            <p className='font-medium text-lg xs:text-xl sm:text-2xl text-gray-600 dark:text-gray-400'>Check back soon for featured content!</p>
+            <h1 className='font-bold text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl capitalize mb-6'>No Featured Post Available</h1>
+            <p className='font-medium text-base xs:text-lg sm:text-xl text-gray-600 dark:text-gray-400'>Check back soon for featured content!</p>
           </div>
         </div>
       </section>
@@ -67,13 +67,13 @@ const HomeCoverSection = ({ blogs }) => {
   };
 
   return (
-    <section className='w-full p-5 xs:p-10 sm:p-12 md:p-16 lg:p-20 border-b-2 border-solid border-dark dark:border-light text-dark dark:text-light'>
+    <section className='w-full p-4 xs:p-6 sm:p-8 md:p-12 lg:p-16 border-b-2 border-solid border-dark dark:border-light text-dark dark:text-light'>
       {/* Section Header */}
       <div className="mb-12">
-        <h2 className="font-bold text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl capitalize mb-6">
+        <h2 className="font-bold text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl capitalize mb-4">
           Home Cover Story
         </h2>
-        <p className="font-medium text-lg xs:text-xl sm:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl">
+        <p className="font-medium text-base xs:text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl">
           Dive into the latest insights, tutorials, and innovations in technology and development.
         </p>
       </div>
@@ -102,7 +102,7 @@ const HomeCoverSection = ({ blogs }) => {
           <div className='absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent' />
 
           {/* Content Overlay - Positioned at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-12 lg:p-16 text-white z-10">
+          <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-12 text-white z-10">
             <div className='max-w-4xl'>
               
               {/* Tag and Metadata */}
@@ -123,14 +123,14 @@ const HomeCoverSection = ({ blogs }) => {
 
               {/* Title */}
               <Link href={blog.url || '#'} className='block mb-6'>
-                <h1 className='font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl leading-tight group-hover:text-accent dark:group-hover:text-accentDark transition-colors duration-300'>
+                <h1 className='font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-tight group-hover:text-accent dark:group-hover:text-accentDark transition-colors duration-300'>
                   {blog.title || 'Untitled Post'}
                 </h1>
               </Link>
 
               {/* Description */}
               {blog.description && (
-                <p className='text-gray-200 text-base md:text-lg lg:text-xl leading-relaxed mb-6 line-clamp-3 max-w-3xl'>
+                <p className='text-gray-200 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed mb-6 line-clamp-3 max-w-3xl'>
                   {blog.description}
                 </p>
               )}

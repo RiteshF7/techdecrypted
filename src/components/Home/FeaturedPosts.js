@@ -66,12 +66,12 @@ const FeaturedPosts = ({ blogs, maxPosts = 6 }) => {
           <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
 
-        <div className="relative z-10 p-5 xs:p-10 sm:p-12 md:p-16 lg:p-20 text-dark dark:text-light">
-          <div className="bg-white/10 dark:bg-black/20 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-white/10 shadow-2xl p-8 sm:p-12 text-center">
-            <h2 className="font-bold text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl capitalize mb-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+        <div className="relative z-10 p-4 xs:p-6 sm:p-8 md:p-12 lg:p-16 text-dark dark:text-light">
+          <div className="bg-white/10 dark:bg-black/20 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-white/10 shadow-2xl p-6 sm:p-8 text-center">
+            <h2 className="font-bold text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl capitalize mb-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
               Featured Posts
             </h2>
-            <p className="font-medium text-lg xs:text-xl sm:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            <p className="font-medium text-base xs:text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               No featured posts available at the moment. Check back soon for latest insights!
             </p>
           </div>
@@ -95,11 +95,11 @@ const FeaturedPosts = ({ blogs, maxPosts = 6 }) => {
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:100px_100px] opacity-30"></div>
       </div>
 
-      <div className="relative z-10 p-5 xs:p-10 sm:p-12 md:p-16 lg:p-20 text-dark dark:text-light">
+      <div className="relative z-10 p-4 xs:p-6 sm:p-8 md:p-12 lg:p-16 text-dark dark:text-light">
         
         {/* Enhanced Section Header */}
         <div className="mb-16">
-          <div className="bg-white/10 dark:bg-black/20 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-white/10 shadow-2xl p-8 sm:p-12">
+          <div className="bg-white/10 dark:bg-black/20 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-white/10 shadow-2xl p-6 sm:p-8">
             {/* Decorative top element */}
             <div className="flex justify-center mb-8">
               <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full p-0.5">
@@ -109,10 +109,10 @@ const FeaturedPosts = ({ blogs, maxPosts = 6 }) => {
               </div>
             </div>
 
-            <h2 className="font-bold text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl capitalize mb-6 text-center bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+            <h2 className="font-bold text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl capitalize mb-6 text-center bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
               Featured Posts
             </h2>
-            <p className="font-medium text-lg xs:text-xl sm:text-2xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto text-center leading-relaxed">
+            <p className="font-medium text-base xs:text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto text-center leading-relaxed">
               Dive into my latest insights on Android development, hardware programming, and innovative tech solutions.
             </p>
 
