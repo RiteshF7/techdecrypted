@@ -117,7 +117,7 @@ const FeaturedPosts = ({ blogs, maxPosts = 6 }) => {
             </p>
 
             {/* Enhanced Blog Statistics */}
-            <div className="flex items-center justify-center gap-6 mt-8 text-sm text-gray-500 dark:text-gray-400">
+            <div className="hidden sm:flex items-center justify-center gap-6 mt-8 text-sm text-gray-500 dark:text-gray-400">
               <span className="flex items-center gap-2 px-3 py-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full">
                 <SparkleIcon className="w-3 h-3" />
                 {sortedBlogs.length} Featured {sortedBlogs.length === 1 ? 'Article' : 'Articles'}
