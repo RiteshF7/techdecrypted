@@ -5,6 +5,7 @@ import Image from "next/image";
 import { slug } from "github-slugger";
 import formatDate from "@/src/utils/formatdate";
 import { format } from "date-fns";
+import readingTime from "reading-time";
 
 // Decorative icons
 const SparkleIcon = ({ className }) => (
@@ -32,8 +33,6 @@ const BlogLayoutOne = ({ blog }) => {
   if (!blog) {
     return null;
   }
-
-  const readingTime = blog.readingTime?.text || blog.readingTime || null;
 
   return (
     <div className="group relative h-full flex flex-col overflow-hidden">
@@ -80,7 +79,7 @@ const BlogLayoutOne = ({ blog }) => {
             )}
             
             {/* Enhanced Title */}
-            <Link href={blog.url || '#'} className="block group/title">
+            <Link href={`/blogs/${blog.slug}` || '#'} className="block group/title">
               <h2 className="font-bold text-xl xs:text-2xl sm:text-3xl md:text-4xl text-white mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:via-purple-400 group-hover:to-pink-400 group-hover:bg-clip-text transition-all duration-500 line-clamp-3">
                 {blog.title || 'Untitled Post'}
               </h2>
@@ -96,10 +95,10 @@ const BlogLayoutOne = ({ blog }) => {
             {/* Enhanced Metadata */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4 text-xs sm:text-sm text-gray-300">
-                {blog.publishedAt && (
+                {blog.published_at && (
                   <span className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
-                    {formatDate(blog.publishedAt)}
+                    {formatDate(blog.published_at)}
                   </span>
                 )}
                 {blog.author && (
@@ -126,10 +125,10 @@ const BlogLayoutOne = ({ blog }) => {
                   {blog.tags.length} Topics
                 </span>
               )}
-              {readingTime && (
+              {blog.body && (
                 <span className="flex items-center gap-2">
                   <ClockIcon className="w-3 h-3 text-purple-400" />
-                  {readingTime}
+                  {readingTime(blog.body).text}
                 </span>
               )}
             </div>
@@ -170,7 +169,7 @@ const BlogLayoutTwo = ({ blog }) => {
         <div className="grid grid-cols-12 items-stretch text-dark dark:text-light min-h-[300px]">
           {/* Enhanced Image Section */}
           <div className="col-span-12 lg:col-span-5 relative overflow-hidden">
-            <Link href={blog.url || "#"} className="block h-full min-h-[250px] group/image">
+            <Link href={`/blogs/${blog.slug}` || "#"} className="block h-full min-h-[250px] group/image">
               <div className="relative w-full h-full">
                 <Image
                   src={blog.image?.src || "/placeholder-blog.jpg"}
@@ -202,7 +201,7 @@ const BlogLayoutTwo = ({ blog }) => {
             )}
 
             {/* Enhanced Title */}
-            <Link href={blog.url || "#"} className="block group/title">
+            <Link href={`/blogs/${blog.slug}` || "#"} className="block group/title">
               <h2 className="font-bold text-lg sm:text-xl lg:text-2xl group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-indigo-600 dark:group-hover:from-blue-400 dark:group-hover:to-indigo-400 group-hover:bg-clip-text transition-all duration-500 line-clamp-2 leading-tight">
                 {blog.title || "Untitled Post"}
               </h2>
@@ -217,10 +216,10 @@ const BlogLayoutTwo = ({ blog }) => {
 
             {/* Enhanced Metadata */}
             <div className="flex items-center flex-wrap gap-3 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-              {blog.publishedAt && (
+              {blog.published_at && (
                 <span className="flex items-center gap-2 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">
                   <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                  {formatDateHelper(blog.publishedAt)}
+                  {formatDateHelper(blog.published_at)}
                 </span>
               )}
               {blog.author && (
@@ -228,10 +227,10 @@ const BlogLayoutTwo = ({ blog }) => {
                   {blog.author}
                 </span>
               )}
-              {blog.readingTime?.text && (
+              {blog.body && (
                 <span className="flex items-center gap-1 px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full">
                   <ClockIcon className="w-3 h-3" />
-                  {blog.readingTime.text} min
+                  {readingTime(blog.body).text} min
                 </span>
               )}
             </div>
@@ -285,7 +284,7 @@ const BlogLayoutThree = ({ blog }) => {
         
         {/* Enhanced Image Section */}
         <div className="relative overflow-hidden rounded-t-3xl">
-          <Link href={blog.url || "#"} className="block group/image">
+          <Link href={`/blogs/${blog.slug}` || "#"} className="block group/image">
             <div className="relative">
               <Image
                 src={blog.image?.src || "/placeholder-blog.jpg"}
@@ -318,7 +317,7 @@ const BlogLayoutThree = ({ blog }) => {
           )}
 
           {/* Enhanced Title */}
-          <Link href={blog.url || "#"} className="block mb-4 flex-grow group/title">
+          <Link href={`/blogs/${blog.slug}` || "#"} className="block mb-4 flex-grow group/title">
             <h2 className="font-bold text-lg sm:text-xl group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-pink-600 group-hover:to-purple-600 dark:group-hover:from-pink-400 dark:group-hover:to-purple-400 group-hover:bg-clip-text transition-all duration-500 line-clamp-3 leading-tight">
               {blog.title || "Untitled Post"}
             </h2>
@@ -334,10 +333,10 @@ const BlogLayoutThree = ({ blog }) => {
           {/* Enhanced Metadata */}
           <div className="mt-auto">
             <div className="flex items-center flex-wrap gap-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-4">
-              {blog.publishedAt && (
+              {blog.published_at && (
                 <span className="flex items-center gap-2 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">
                   <div className="w-2 h-2 bg-pink-400 rounded-full"></div>
-                  {formatDateHelper(blog.publishedAt)}
+                  {formatDateHelper(blog.published_at)}
                 </span>
               )}
               {blog.author && (
@@ -345,10 +344,10 @@ const BlogLayoutThree = ({ blog }) => {
                   {blog.author}
                 </span>
               )}
-              {blog.readingTime?.text && (
+              {blog.body && (
                 <span className="flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-green-400 to-emerald-400 text-white rounded-full text-xs font-medium shadow-lg">
                   <ClockIcon className="w-3 h-3" />
-                  {blog.readingTime.text} min
+                  {readingTime(blog.body).text} min
                 </span>
               )}
             </div>

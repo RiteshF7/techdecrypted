@@ -112,7 +112,7 @@ const ExperienceSection = () => {
           Work Experience
         </h2>
         <p className="font-medium text-lg xs:text-xl sm:text-2xl mt-4 text-gray-600 dark:text-gray-400">
-        I'm a Software Development Engineer with over 7 years of hands-on experience in Android development, building scalable, high-performance mobile applications from the ground up. I specialize in crafting intuitive user experiences, architecting clean and modular codebases, and solving complex technical challenges in fast-paced environments.
+        I&apos;m a Software Development Engineer with over 7 years of hands-on experience in Android development, building scalable, high-performance mobile applications from the ground up. I specialize in crafting intuitive user experiences, architecting clean and modular codebases, and solving complex technical challenges in fast-paced environments.
         </p>
       </div>
       
