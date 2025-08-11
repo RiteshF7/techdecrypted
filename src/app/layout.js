@@ -5,6 +5,7 @@ import Header from "@/src/components/Header";
 import Footer from "../components/Footer";
 import siteMetadata from "../utils/siteMetaData";
 import Script from "next/script";
+import NextTopLoader from 'nextjs-toploader';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -64,6 +65,7 @@ export default function RootLayout({ children }) {
           "relative overflow-x-hidden"
         )}
       >
+        <NextTopLoader color="#8B5CF6" />
         {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           {/* Floating orbs */}
@@ -119,15 +121,6 @@ export default function RootLayout({ children }) {
           </div>
         </div>
 
-        {/* Loading animation overlay (optional) */}
-        <div id="page-loader" className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500">
-          <div className="flex space-x-2">
-            <div className="w-3 h-3 bg-purple-500 rounded-full animate-bounce"></div>
-            <div className="w-3 h-3 bg-indigo-500 rounded-full animate-bounce delay-100"></div>
-            <div className="w-3 h-3 bg-pink-500 rounded-full animate-bounce delay-200"></div>
-          </div>
-        </div>
-
         {/* Performance optimization script */}
         <Script id="performance-optimizer" strategy="afterInteractive">
           {`
@@ -140,17 +133,6 @@ export default function RootLayout({ children }) {
             
             // Smooth scroll behavior
             document.documentElement.style.scrollBehavior = 'smooth';
-            
-            // Hide loader after page load
-            window.addEventListener('load', () => {
-              const loader = document.getElementById('page-loader');
-              if (loader) {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                  loader.style.display = 'none';
-                }, 500);
-              }
-            });
           `}
         </Script>
       </body>
