@@ -1,6 +1,7 @@
 import { sortBlogs } from "@/src/utils";
 import React from "react";
 import { BlogLayoutOne, BlogLayoutThree, BlogLayoutTwo } from "../Blog/BlogLayoutsAll";
+import Link from 'next/link';
 
 // Decorative icons
 const SparkleIcon = ({ className }) => (
@@ -183,10 +184,10 @@ const FeaturedPosts = ({ blogs, maxPosts = 6 }) => {
         {/* Enhanced View All Posts Button */}
         <div className="text-center mt-16">
           <div className="inline-block">
-            <a
-              href="/categories/all"
-              className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white rounded-2xl font-medium transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 overflow-hidden"
-            >
+            <Link href="/categories/all/">
+              View All
+            </Link>
+
               {/* Button background animation */}
               <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               
@@ -199,7 +200,7 @@ const FeaturedPosts = ({ blogs, maxPosts = 6 }) => {
               {/* Floating particles */}
               <div className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 animate-bounce"></div>
               <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-700 animate-bounce delay-200"></div>
-            </a>
+
           </div>
         </div>
       </div>
