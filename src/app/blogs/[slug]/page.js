@@ -6,7 +6,6 @@ import { notFound } from "next/navigation";
 import { headers } from 'next/headers';
 import MobileBlogPage from "./mobile-page";
 import DesktopBlogPage from "./desktop-page";
-import { supabase } from '@/src/utils/supabase';
 import PropTypes from "prop-types";
 import ViewCounter from "@/src/components/Blog/ViewCounter";
 
@@ -128,50 +127,8 @@ export default async function BlogPage({ params }) {
           <div className="w-full px-20 pt-5">
             <div className="flex max-w-full">
 
-              {/* Left Sidebar - Table of Contents */}
-              {/* <div className="hidden lg:block w-56 flex-shrink-0"> */}
-                {/* <div className="sticky top-24 h-screen overflow-y-auto p-3">
-                  <div className="bg-white/60 dark:bg-black/20 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-white/10 shadow-lg p-3">
-
-                    <h3 className="font-semibold text-base text-gray-800 dark:text-gray-200 mb-3 pb-2 border-b border-gray-200/50 dark:border-gray-700/50">
-                      Contents
-                    </h3> */}
-{/*
-                    {blog.toc && blog.toc.length > 0 ? (
-                      <nav className="max-h-[60vh] overflow-y-auto">
-                        <ul className="space-y-1">
-                          {blog.toc.map((item) => (
-                            <TableOfContentsItem key={item.url} item={item} />
-                          ))}
-                        </ul>
-                      </nav>
-                    ) : (
-                      <p className="text-gray-500 dark:text-gray-400 text-xs">
-                        No sections
-                      </p>
-                    )} */}
-
-                    {/* Progress indicator */}
-                    {/* <div className="mt-3 pt-2 border-t border-gray-200/50 dark:border-gray-700/50">
-                      <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                        <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></div>
-                        <span>Reading</span>
-                      </div>
-                    </div>
-                  </div> */}
-                {/* </div>
-              </div> */}
-
-
-  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);
-
-  {/* if (isMobile) {
-     <MobileBlogPage blog={blog} />
-  } */}
-
-  return <DesktopBlogPage blog={blog} />;
-              {/* Main Content Area - Optimized width */}
-
+                const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);
+                {isMobile ? <MobileBlogPage blog={blog} /> : <DesktopBlogPage blog={blog} />}
             </div>
           </div>
         </div>
