@@ -1,7 +1,7 @@
 ---
 title: "Why android:largeHeap='true' is Usually a Terrible Idea (And When It's Not)"
 description: "A comprehensive guide to Android memory management covering androidLargeHeap = true , memory performance and optimization techniques."
-image: android.jpg
+image: android.png
 publishedAt: 2025-08-12 10:00:00
 updatedAt: 2025-08-12 10:00:00
 readingTime: 9-11 Minutes
@@ -21,13 +21,12 @@ tags:
 slug: android-large-heap-true
 ---
 
-## Why android:largeHeap='true' is Usually a Terrible Idea (And When It's Not)
 
 Hey there, memory management rebels! 
 
 So you've got an OOM crash, you've Googled "how to fix OutOfMemoryError Android," and the first Stack Overflow answer says: "Just add `android:largeHeap='true'` to your manifest!"
 
-Seems legit, right? One line of code to solve all your problems? Well, sit down, because we need to have "the talk" about why this "quick fix" might turn your smooth app into a laggy nightmare. 😬
+Seems legit, right? One line of code to solve all your problems? Well, sit down, because we need to have "the talk" about why this "quick fix" might turn your smooth app into a laggy nightmare. 
 
 ### The Tempting Quick Fix 
 
@@ -131,24 +130,24 @@ class PhotoGalleryActivity : AppCompatActivity() {
 Here's what happens in practice:
 
 **Standard Heap App:**
-- Initial memory: 48MB
-- GC pause time: 2-4ms
-- Frame budget: 16.67ms
-- GC impact: 12-24% of frame time
-- Result: Smooth with occasional micro-stutters
+> - Initial memory: 48MB  
+> - GC pause time: 2–4ms  
+> - Frame budget: 16.67ms  
+> - GC impact: 12–24% of frame time  
+> - Result: Smooth with occasional micro-stutters
 
 **Large Heap App:**
-- Initial memory: 192MB  
-- GC pause time: 8-16ms
-- Frame budget: 16.67ms
-- GC impact: 48-96% of frame time
-- Result: Consistently laggy, users complain about jank 
+> - Initial memory: 192MB  
+> - GC pause time: 8-16ms
+> - Frame budget: 16.67ms
+> - GC impact: 48-96% of frame time
+> - Result: Consistently laggy, users complain about jank 
 
 ### When Large Heap Might Be Justified 
 
 Okay, but there ARE legitimate use cases. Here are the rare scenarios where `largeHeap` makes sense:
 
-#### 1. Image/Video Processing Apps 📸
+#### 1. Image/Video Processing Apps 
 ```kotlin
 class PhotoEditorActivity : AppCompatActivity() {
     fun processRAWImage(imagePath: String) {
@@ -296,12 +295,12 @@ class PerformanceTester {
 
 ### Your Mission 
 
-Here's your homework:
+**Here's your homework:**
 
-1. **Check if you're using `largeHeap`** in your current project
-2. **Run the performance test above** with and without it
-3. **Profile your app** and look for long GC pauses
-4. **Try the alternative strategies** instead of large heap
+> 1. **Check if you're using `largeHeap`** in your current project  
+> 2. **Run the performance test above** with and without it  
+> 3. **Profile your app** and look for long GC pauses  
+> 4. **Try the alternative strategies** instead of large heap
 
 ### The Plot Twist 
 
@@ -312,10 +311,10 @@ Here's something mind-blowing: Instagram, one of the most memory-intensive apps 
 In our next episode: "**Multi-Process Architecture: How Instagram Loads Videos Without Killing Your UI**"
 
 We'll explore:
-- Why Instagram uses separate processes for heavy tasks
-- How to set up multi-process architecture
-- The trade-offs and communication between processes
-- Real examples of apps doing this right
+> - Why Instagram uses separate processes for heavy tasks
+> - How to set up multi-process architecture
+> - The trade-offs and communication between processes
+> - Real examples of apps doing this right
 
 ### The Challenge 
 
