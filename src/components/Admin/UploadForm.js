@@ -73,7 +73,7 @@ export default function UploadForm() {
         <input
           id="title"
           {...register("title", { required: true })}
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full px-3 py-2 border bg-black rounded-md"
         />
         {errors.title && <span className="text-red-500">Title is required</span>}
       </div>
@@ -85,7 +85,7 @@ export default function UploadForm() {
         <textarea
           id="description"
           {...register("description")}
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full px-3 py-2 border bg-black rounded-md"
         />
       </div>
 
@@ -97,7 +97,7 @@ export default function UploadForm() {
           id="body"
           {...register("body", { required: true })}
           rows={10}
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full px-3 py-2 border bg-black rounded-md"
         />
         {errors.body && <span className="text-red-500">Body is required</span>}
       </div>
@@ -109,7 +109,7 @@ export default function UploadForm() {
         <input
           id="author"
           {...register("author")}
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full px-3 py-2 border bg-black rounded-md"
         />
       </div>
 
@@ -120,7 +120,7 @@ export default function UploadForm() {
         <input
           id="tags"
           {...register("tags")}
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full px-3 py-2 border bg-black rounded-md"
         />
       </div>
 
@@ -132,7 +132,7 @@ export default function UploadForm() {
           type="date"
           id="published_at"
           {...register("published_at", { required: true })}
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full px-3 py-2 border bg-black rounded-md"
         />
         {errors.published_at && (
           <span className="text-red-500">Published date is required</span>
