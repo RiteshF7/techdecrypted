@@ -123,7 +123,7 @@ const HomeCoverSection = ({ blogs }) => {
               </div>
 
               {/* Title */}
-              <Link href={`/blogs/${blog.slug}` || '#'} className='block mb-6'>
+              <Link href={blog.url || '#'} className='block mb-6'>
                 <h1 className='font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-tight group-hover:text-accent dark:group-hover:text-accentDark transition-colors duration-300'>
                   {blog.title || 'Untitled Post'}
                 </h1>

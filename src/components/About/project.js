@@ -1,4 +1,6 @@
 import React from 'react';
+import Image from 'next/image';
+
 
 // Reusable Project Item Component
 const ProjectItem = ({ project, index }) => {
@@ -64,7 +66,7 @@ const ProjectItem = ({ project, index }) => {
                 key={imageIndex}
                 className="relative group border-2 border-dark dark:border-light rounded overflow-hidden hover:scale-105 transition-transform duration-300"
               >
-                <img 
+                <Image
                   src={image} 
                   alt={`${project.title} screenshot ${imageIndex + 1}`}
                   className="w-full h-48 object-cover"
