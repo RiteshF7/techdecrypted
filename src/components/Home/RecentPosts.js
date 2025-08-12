@@ -27,9 +27,9 @@ const RecentPosts = ({ blogs }) => {
   // Handle case when no recent posts are available
   if (!recentPosts || recentPosts.length === 0) {
     return (
-      <section className="w-full p-5 xs:p-10 sm:p-12 md:p-16 lg:p-20 border-b-2 border-solid border-dark dark:border-light text-dark dark:text-light">
+      <section className="w-full p-4 xs:p-6 sm:p-8 md:p-12 lg:p-16 border-b-2 border-solid border-dark dark:border-light text-dark dark:text-light">
         <div className="flex items-center justify-between mb-12">
-          <h2 className="font-bold text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl capitalize">
+          <h2 className="font-bold text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl capitalize">
             Recent Posts
           </h2>
           <Link
@@ -39,7 +39,7 @@ const RecentPosts = ({ blogs }) => {
             view all →
           </Link>
         </div>
-        <p className="font-medium text-lg xs:text-xl sm:text-2xl text-gray-600 dark:text-gray-400">
+        <p className="font-medium text-base xs:text-lg sm:text-xl text-gray-600 dark:text-gray-400">
           No recent posts available at the moment. Check back soon for more content!
         </p>
       </section>
@@ -47,14 +47,14 @@ const RecentPosts = ({ blogs }) => {
   }
 
   return (
-    <section className="w-full p-5 xs:p-10 sm:p-12 md:p-16 lg:p-20 border-b-2 border-solid border-dark dark:border-light text-dark dark:text-light">
+    <section className="w-full p-4 xs:p-6 sm:p-8 md:p-12 lg:p-16 border-b-2 border-solid border-dark dark:border-light text-dark dark:text-light">
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-12">
         <div className="mb-6 sm:mb-0">
-          <h2 className="font-bold text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl capitalize mb-4">
+          <h2 className="font-bold text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl capitalize mb-4">
             Recent Posts
           </h2>
-          <p className="font-medium text-lg xs:text-xl sm:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl">
+          <p className="font-medium text-base xs:text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl">
             Stay updated with my latest articles on technology, development, and innovation.
           </p>
           
