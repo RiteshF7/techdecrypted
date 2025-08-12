@@ -4,6 +4,7 @@ import Link from 'next/link';
 import React from 'react';
 import Tag from '../Elements/Tag';
 import { slug } from 'github-slugger';
+import readingTime from 'reading-time';
 
 const HomeCoverSection = ({ blogs }) => {
   // Safety check and sorting
@@ -13,7 +14,7 @@ const HomeCoverSection = ({ blogs }) => {
   try {
     if (blogs && Array.isArray(blogs) && blogs.length > 0) {
       // First, try to find a homeCover blog
-      const homeCoverBlog = blogs.find(b => b.homeCover && b.isPublished);
+      const homeCoverBlog = blogs.find(b => b.home_cover && b.is_published);
       if (homeCoverBlog) {
         blog = homeCoverBlog;
       } else {
@@ -27,14 +28,14 @@ const HomeCoverSection = ({ blogs }) => {
     // Fallback sorting if sortBlogs fails
     if (blogs && Array.isArray(blogs) && blogs.length > 0) {
       // First try to find a homeCover blog
-      const homeCoverBlog = blogs.find(b => b.homeCover && b.isPublished);
+      const homeCoverBlog = blogs.find(b => b.home_cover && b.is_published);
       if (homeCoverBlog) {
         blog = homeCoverBlog;
       } else {
         // Fallback to most recent published blog
         sortedBlogs = blogs
-          .filter(b => b && b.isPublished)
-          .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+          .filter(b => b && b.is_published)
+          .sort((a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0));
         blog = sortedBlogs[0];
       }
     }
@@ -114,15 +115,15 @@ const HomeCoverSection = ({ blogs }) => {
                     className='px-4 py-2 text-sm border border-white/30 rounded-full backdrop-blur-sm bg-white/10 hover:bg-white/20 transition-all duration-200 text-white font-medium'
                   />
                 )}
-                {blog.publishedAt && (
+                {blog.published_at && (
                   <span className='text-gray-300 text-sm'>
-                    {formatDate(blog.publishedAt)}
+                    {formatDate(blog.published_at)}
                   </span>
                 )}
               </div>
 
               {/* Title */}
-              <Link href={blog.url || '#'} className='block mb-6'>
+              <Link href={`/blogs/${blog.slug}` || '#'} className='block mb-6'>
                 <h1 className='font-bold text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-tight group-hover:text-accent dark:group-hover:text-accentDark transition-colors duration-300'>
                   {blog.title || 'Untitled Post'}
                 </h1>
@@ -148,10 +149,10 @@ const HomeCoverSection = ({ blogs }) => {
                 )}
                 <span>•</span>
                 <span>Home Cover Story</span>
-                {blog.readingTime?.text && (
+                {blog.body && (
                   <>
                     <span>•</span>
-                    <span>{blog.readingTime.text} Read</span>
+                    <span>{readingTime(blog.body).text} Read</span>
                   </>
                 )}
               </div>
@@ -168,7 +169,7 @@ const HomeCoverSection = ({ blogs }) => {
               <span>•</span>
               <span>Full Screen Experience</span>
               <span>•</span>
-              <span>{blog.readingTime.text}</span>
+              <span>{readingTime(blog.body).text}</span>
               <span>•</span>
               <span>Home Cover</span>
             

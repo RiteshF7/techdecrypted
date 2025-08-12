@@ -1,24 +1,33 @@
 import siteMetadata from "@/src/utils/siteMetaData";
-import { blogs } from '@/.velite/generated';
+import { supabase } from "@/src/utils/supabase";
+import { slug as slugify } from "github-slugger";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { headers } from 'next/headers';
 import MobileBlogPage from "./mobile-page";
 import DesktopBlogPage from "./desktop-page";
 import PropTypes from "prop-types";
+import ViewCounter from "@/src/components/Blog/ViewCounter";
 
 export async function generateStaticParams() {
-  return blogs.map((blog) => ({ slug: blog.slug }));
+  const { data: blogs } = await supabase.from("blogs").select("slug");
+  return blogs?.map((blog) => ({ slug: blog.slug })) || [];
 }
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const blog = blogs.find((blog) => blog.slug === slug);
+  const { data: blog } = await supabase
+    .from("blogs")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+
   if (!blog) {
     return {};
   }
 
-  const publishedAt = new Date(blog.publishedAt).toISOString();
-  const modifiedAt = new Date(blog.updatedAt || blog.publishedAt).toISOString();
+  const publishedAt = new Date(blog.published_at).toISOString();
+  const modifiedAt = new Date(blog.updated_at || blog.published_at).toISOString();
 
   let imageList = [siteMetadata.socialBanner];
   if (blog.image?.src) {
@@ -59,7 +68,11 @@ export async function generateMetadata({ params }) {
 
 export default async function BlogPage({ params }) {
   const { slug } = await params;
-  const blog = blogs.find((blog) => blog.slug === slug);
+  const { data: blog } = await supabase
+    .from("blogs")
+    .select("*")
+    .eq("slug", slug)
+    .single();
 
   if (!blog) {
     notFound();
@@ -67,6 +80,87 @@ export default async function BlogPage({ params }) {
 
   const headersList = headers();
   const userAgent = headersList.get('user-agent');
+  let imageList = [siteMetadata.socialBanner];
+  if (blog.image?.src) {
+    imageList =
+      typeof blog.image.src === "string"
+        ? [siteMetadata.siteUrl + blog.image.src]
+        : blog.image;
+  }
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": blog.title,
+    "description": blog.description,
+    "image": imageList,
+    "datePublished": new Date(blog.published_at).toISOString(),
+    "dateModified": new Date(blog.updated_at || blog.published_at).toISOString(),
+    "author": [
+      {
+        "@type": "Person",
+        "name": blog.author || siteMetadata.author,
+        "url": siteMetadata.twitter,
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <article className="min-h-screen">
+        {/* Beautiful background with theme colors */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-indigo-50/20 dark:from-slate-950 dark:via-black dark:to-purple-950/20"></div>
+
+        {/* Subtle floating elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="relative z-10">
+          {/* Main content layout */}
+          <div className="w-full px-20 pt-5">
+            <div className="flex max-w-full">
+
+              {/* Left Sidebar - Table of Contents */}
+              {/* <div className="hidden lg:block w-56 flex-shrink-0"> */}
+                {/* <div className="sticky top-24 h-screen overflow-y-auto p-3">
+                  <div className="bg-white/60 dark:bg-black/20 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-white/10 shadow-lg p-3">
+
+                    <h3 className="font-semibold text-base text-gray-800 dark:text-gray-200 mb-3 pb-2 border-b border-gray-200/50 dark:border-gray-700/50">
+                      Contents
+                    </h3> */}
+{/*
+                    {blog.toc && blog.toc.length > 0 ? (
+                      <nav className="max-h-[60vh] overflow-y-auto">
+                        <ul className="space-y-1">
+                          {blog.toc.map((item) => (
+                            <TableOfContentsItem key={item.url} item={item} />
+                          ))}
+                        </ul>
+                      </nav>
+                    ) : (
+                      <p className="text-gray-500 dark:text-gray-400 text-xs">
+                        No sections
+                      </p>
+                    )} */}
+
+                    {/* Progress indicator */}
+                    {/* <div className="mt-3 pt-2 border-t border-gray-200/50 dark:border-gray-700/50">
+                      <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                        <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></div>
+                        <span>Reading</span>
+                      </div>
+                    </div>
+                  </div> */}
+                {/* </div>
+              </div> */}
+
 
   const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);
 

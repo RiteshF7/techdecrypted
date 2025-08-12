@@ -16,8 +16,8 @@ const RecentPosts = ({ blogs }) => {
     // Fallback sorting if sortBlogs fails
     if (blogs && Array.isArray(blogs)) {
       sortedBlogs = blogs
-        .filter(blog => blog && blog.isPublished)
-        .sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+        .filter(blog => blog && blog.is_published)
+        .sort((a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0));
     }
   }
 
