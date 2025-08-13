@@ -189,23 +189,27 @@ const Header = () => {
       {/* Social Links - Enhanced */}
       <div className="hidden sm:flex items-center space-x-4">
         <div className="flex items-center space-x-3 p-3 rounded-2xl bg-white/10 dark:bg-black/10 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-lg">
-          {user ? (
-            <button
-              onClick={async () => {
-                await supabase.auth.signOut();
-                window.location.href = "/";
-              }}
-              className="inline-block px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700"
-            >
-              Logout
-            </button>
-          ) : (
-            <Link href="/login">
-              <button className="inline-block px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">
-                Login
-              </button>
-            </Link>
-          )}
+        {user ? (
+      <button
+        onClick={async () => {
+          await supabase.auth.signOut();
+          window.location.href = "/";
+        }}
+        className="inline-block px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700 transition-all duration-300 hover:scale-110 hover:rotate-12"
+      >
+        Logout
+      </button>
+    ) : (
+      <Link href="/login">
+        <button
+          className="inline-block px-4 py-2 text-blue-300 bg-blue-500/20 rounded-lg hover:bg-blue-500/30 hover:text-blue-200 transition-all duration-300 hover:scale-110 hover:rotate-12"
+        >
+          Login
+        </button>
+      </Link>
+    )}
+
+
           <a 
             href={siteMetadata.linkedin} 
             rel="noopener noreferrer" 
@@ -236,17 +240,7 @@ const Header = () => {
             <PortfolioIcon className="w-full h-full text-purple-400 hover:text-purple-300 transition-colors duration-200" />
           </a>
 
-          {/* Theme toggle button */}
-          <button
-            onClick={() => setMode(mode === "light" ? "dark" : "light")}
-            className="inline-block w-6 h-6 p-1 rounded-lg bg-yellow-500/20 hover:bg-yellow-500/30 transition-all duration-300 hover:scale-110 hover:rotate-180"
-            aria-label="Toggle theme"
-          >
-            {mode === "light" ? 
-              <MoonIcon className="w-full h-full text-yellow-400 hover:text-yellow-300 transition-colors duration-200" /> :
-              <SunIcon className="w-full h-full text-yellow-400 hover:text-yellow-300 transition-colors duration-200" />
-            }
-          </button>
+      
         </div>
       </div>
     </header>
