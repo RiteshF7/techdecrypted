@@ -1,10 +1,13 @@
+'use client';
 
 import ProjectsSection from "@/src/components/About/project";
 
 export default function Project() {
   return (
-    
-     <ProjectsSection/>
-  
+    <main className="min-h-screen bg-light dark:bg-dark">
+      <ProjectsSection />
+    </main>
   );
+
+
 }

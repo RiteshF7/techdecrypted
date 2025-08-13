@@ -6,7 +6,7 @@ import siteMetadata from "@/src/utils/siteMetaData";
 import { useThemeSwitch } from "../Hooks/useThemeSwitch";
 import { useState, useEffect } from "react";
 import { cx } from "@/src/utils";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/src/utils/supabase/client";
 
 // Minimal decorative icons as SVG components
 const SparkleIcon = ({ className }) => (

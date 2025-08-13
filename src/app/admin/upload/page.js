@@ -1,5 +1,5 @@
 import UploadForm from "@/src/components/Admin/UploadForm";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/src/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 export default async function UploadPage() {

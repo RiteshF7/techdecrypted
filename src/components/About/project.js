@@ -1,6 +1,8 @@
-import React from 'react';
-import Image from 'next/image';
+'use client';
 
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { createClient } from '@/src/utils/supabase/client';
 
 // Reusable Project Item Component
 const ProjectItem = ({ project, index }) => {
@@ -15,7 +17,7 @@ const ProjectItem = ({ project, index }) => {
           <p className="font-medium text-base xs:text-lg leading-relaxed mb-6">
             {project.description}
           </p>
-          
+
           {/* Tech Stack */}
           <div className="mb-6">
             <h4 className="font-semibold text-lg mb-3 text-accent dark:text-accentDark">
@@ -23,7 +25,7 @@ const ProjectItem = ({ project, index }) => {
             </h4>
             <div className="flex flex-wrap gap-2">
               {project.technologies.map((tech, techIndex) => (
-                <span 
+                <span
                   key={techIndex}
                   className="px-3 py-1 text-sm border border-dark dark:border-light rounded hover:bg-dark hover:text-light dark:hover:bg-light dark:hover:text-dark transition-all duration-200"
                 >
@@ -32,11 +34,11 @@ const ProjectItem = ({ project, index }) => {
               ))}
             </div>
           </div>
-          
+
           {/* Links */}
           <div className="flex flex-wrap gap-4">
             {project.githubUrl && (
-              <a 
+              <a
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -46,7 +48,7 @@ const ProjectItem = ({ project, index }) => {
               </a>
             )}
             {project.liveUrl && (
-              <a 
+              <a
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -57,18 +59,20 @@ const ProjectItem = ({ project, index }) => {
             )}
           </div>
         </div>
-        
+
         {/* Right side - Project Images */}
         <div className="lg:w-1/2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {project.images.map((image, imageIndex) => (
-              <div 
+              <div
                 key={imageIndex}
                 className="relative group border-2 border-dark dark:border-light rounded overflow-hidden hover:scale-105 transition-transform duration-300"
               >
                 <Image
-                  src={image} 
+                  src={image}
                   alt={`${project.title} screenshot ${imageIndex + 1}`}
+                  width={600}
+                  height={300}
                   className="w-full h-48 object-cover"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
@@ -81,7 +85,7 @@ const ProjectItem = ({ project, index }) => {
           </div>
         </div>
       </div>
-      
+
       {/* Project Number */}
       <div className="flex justify-end mt-8">
         <span className="font-bold text-6xl xs:text-7xl sm:text-8xl text-gray-200 dark:text-gray-800">
@@ -91,9 +95,6 @@ const ProjectItem = ({ project, index }) => {
     </div>
   );
 };
-
-import { createClient } from '@/utils/supabase/client';
-import { useEffect, useState } from 'react';
 
 const ProjectsSection = () => {
   const [projects, setProjects] = useState([]);
@@ -105,7 +106,7 @@ const ProjectsSection = () => {
       if (error) {
         console.error('Error fetching projects:', error);
       } else {
-        setProjects(data);
+        setProjects(data || []);
       }
     };
 
@@ -123,14 +124,10 @@ const ProjectsSection = () => {
           A showcase of my technical expertise and innovative solutions across various domains.
         </p>
       </div>
-      
+
       {/* Project Items */}
       {projects.map((project, index) => (
-        <ProjectItem 
-          key={index} 
-          project={project} 
-          index={index} 
-        />
+        <ProjectItem key={index} project={project} index={index} />
       ))}
     </section>
   );
