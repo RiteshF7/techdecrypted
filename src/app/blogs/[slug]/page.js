@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 export async function generateStaticParams() {
   return blogs.map((blog) => ({ slug: blog.slug }));
 }
-
+//
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const blog = blogs.find((blog) => blog.slug === slug);
