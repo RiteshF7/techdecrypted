@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { supabase } from "@/src/utils/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -13,12 +13,25 @@ export default function UploadForm() {
   } = useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const supabase = createClient();
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      const { title, description, body, author, tags, published_at, image } = data;
+      const { title, description, author, tags, published_at, image, markdownFile } = data;
+      let { body } = data;
       const slug = title.toLowerCase().replace(/\s+/g, "-");
+
+      if (markdownFile && markdownFile[0]) {
+        body = await markdownFile[0].text();
+      }
+
+      if (!body) {
+        alert("Body content or a markdown file is required.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const file = image[0];
       const filePath = `public/${slug}-${file.name}`;
 
@@ -31,8 +44,8 @@ export default function UploadForm() {
         throw imageError;
       }
 
-      const imageUrl = supabase.storage.from("images").getPublicUrl(filePath)
-        .data.publicUrl;
+      const { data: { publicUrl } } = supabase.storage.from("images").getPublicUrl(filePath);
+
 
       // Insert blog post into Supabase table
       const { data: postData, error: postError } = await supabase
@@ -46,7 +59,7 @@ export default function UploadForm() {
             tags: tags.split(",").map((tag) => tag.trim()),
             published_at,
             slug,
-            image: { src: imageUrl },
+            image: { src: publicUrl },
           },
         ]);
 
@@ -95,11 +108,22 @@ export default function UploadForm() {
         </label>
         <textarea
           id="body"
-          {...register("body", { required: true })}
+          {...register("body")}
           rows={10}
           className="w-full px-3 py-2 border bg-black rounded-md"
         />
-        {errors.body && <span className="text-red-500">Body is required</span>}
+      </div>
+
+      <div>
+        <label htmlFor="markdownFile" className="block font-medium">
+          Or upload a .md/.mdx file
+        </label>
+        <input
+          type="file"
+          id="markdownFile"
+          {...register("markdownFile")}
+          accept=".md,.mdx"
+        />
       </div>
 
       <div>

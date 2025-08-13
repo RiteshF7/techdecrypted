@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Link from "next/link";
 import Logo from "./Logo";
 import { DribbbleIcon, GithubIcon, LinkedinIcon, MoonIcon, PhoneIcon, PortfolioIcon, SunIcon, TwitterIcon } from "../Icons";
@@ -6,6 +6,7 @@ import siteMetadata from "@/src/utils/siteMetaData";
 import { useThemeSwitch } from "../Hooks/useThemeSwitch";
 import { useState, useEffect } from "react";
 import { cx } from "@/src/utils";
+import { createClient } from "@/utils/supabase/client";
 
 // Minimal decorative icons as SVG components
 const SparkleIcon = ({ className }) => (
@@ -25,14 +26,24 @@ const Header = () => {
   const [mode, setMode] = useThemeSwitch();
   const [click, setClick] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+    };
+    getUser();
+  }, [supabase.auth]);
 
   // Add scroll effect for enhanced transparency
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const toggle = () => {
@@ -109,6 +120,12 @@ const Header = () => {
           Contact
           <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>
         </Link>
+        {user && (
+          <Link href="/admin/upload" className="ml-3 hover:text-indigo-500 transition-colors duration-200 relative group">
+            Dashboard
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300 group-hover:w-full"></span>
+          </Link>
+        )}
         <DiamondIcon className="w-3 h-3 ml-3 text-pink-400" />
       </nav>
 
@@ -159,12 +176,36 @@ const Header = () => {
           <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-indigo-500 transition-all duration-300 group-hover:w-full rounded-full"></span>
         </Link>
         
+        {user && (
+          <Link href="/admin/upload" className="mx-4 hover:text-orange-500 transition-all duration-300 relative group">
+            Dashboard
+            <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-indigo-500 transition-all duration-300 group-hover:w-full rounded-full"></span>
+          </Link>
+        )}
+
         <DiamondIcon className="w-4 h-4 ml-4 text-pink-400 animate-pulse delay-500" />
       </nav>
 
       {/* Social Links - Enhanced */}
       <div className="hidden sm:flex items-center space-x-4">
         <div className="flex items-center space-x-3 p-3 rounded-2xl bg-white/10 dark:bg-black/10 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-lg">
+          {user ? (
+            <button
+              onClick={async () => {
+                await supabase.auth.signOut();
+                window.location.href = "/";
+              }}
+              className="inline-block px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link href="/login">
+              <button className="inline-block px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                Login
+              </button>
+            </Link>
+          )}
           <a 
             href={siteMetadata.linkedin} 
             rel="noopener noreferrer" 
