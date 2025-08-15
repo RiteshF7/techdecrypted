@@ -5,6 +5,7 @@ import siteMetadata from "@/src/utils/siteMetaData";
 import { slug as slugify } from "github-slugger";
 import Link from "next/link";
 import PropTypes from "prop-types";
+import ViewCounter from "@/src/components/Blog/ViewCounter";
 
 // Clean, minimal Table of Contents
 function TableOfContentsItem({ item, level = "two" }) {
@@ -207,6 +208,17 @@ export default function DesktopBlogPage({ blog }) {
                               <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                                 {blog.readingTime.text}
                               </span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="p-2 rounded-xl bg-green-100 dark:bg-green-900/30">
+                              <ClockIcon className="w-4 h-4 text-green-600 dark:text-green-400" />
+                            </div>
+                            <div>
+                              <div className="text-xs font-medium text-gray-500 dark:text-gray-500 uppercase tracking-wide">
+                                Views
+                              </div>
+                              <ViewCounter slug={blog.slug} />
                             </div>
                           </div>
                         </div>

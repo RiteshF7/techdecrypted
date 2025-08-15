@@ -5,6 +5,7 @@ import { slug as slugify } from "github-slugger";
 import siteMetadata from "@/src/utils/siteMetaData";
 import Link from "next/link";
 import PropTypes from "prop-types";
+import ViewCounter from "@/src/components/Blog/ViewCounter";
 
 // Icons for metadata
 const CalendarIcon = ({ className }) => (
@@ -80,6 +81,10 @@ export default function MobileBlogPage({ blog }) {
                 <div className="flex items-center gap-2">
                     <ClockIcon className="w-5 h-5 text-purple-500" />
                     <span>{blog.readingTime.text}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <ClockIcon className="w-5 h-5 text-green-500" />
+                    <ViewCounter slug={blog.slug} />
                 </div>
             </div>
 

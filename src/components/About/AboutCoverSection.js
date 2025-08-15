@@ -20,7 +20,7 @@ const AboutCoverSection = () => {
             <p className='font-medium capitalize mt-4 text-base'>
             Few are blessed to live their passion as their profession.
             I consider it a privilege and one I refuse to waste.
-            I want to become one of the greats and I won't stop until I do.
+            I want to become one of the greats and I won&apos;t stop until I do.
             </p>
         </div>
     </section>
