@@ -65,7 +65,7 @@ export default async function BlogPage({ params }) {
     notFound();
   }
 
-  const headersList = headers();
+  const headersList = await headers();
   const userAgent = headersList.get('user-agent');
 
   const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(userAgent);

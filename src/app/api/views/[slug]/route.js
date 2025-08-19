@@ -2,7 +2,7 @@ import { supabase } from "../../../../utils/supabase";
 import { NextResponse } from "next/server";
 
 export async function POST(req, { params }) {
-  const { slug } = params;
+  const { slug } = await params;
   const { userAgent, referrer, sessionId, deviceType, browser, os } = await req.json();
   
   // Get client IP (you'll need to handle this based on your deployment)
@@ -84,7 +84,7 @@ export async function POST(req, { params }) {
 }
 
 export async function GET(req, { params }) {
-  const { slug } = params;
+  const { slug } = await params;
 
   try {
     const { data, error } = await supabase
