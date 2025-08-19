@@ -7,6 +7,30 @@ module.exports = {
     webpack: config => {
       config.plugins.push(new VeliteWebpackPlugin())
       return config
+    },
+    // Image optimization configuration
+    images: {
+      // Allow images from your domain
+      domains: [],
+      // Allow local images
+      unoptimized: false,
+      // Configure image formats
+      formats: ['image/webp', 'image/avif'],
+      // Minimum cache TTL
+      minimumCacheTTL: 60,
+      // Device sizes for responsive images
+      deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+      // Image sizes
+      imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    },
+    // Static file serving
+    async rewrites() {
+      return [
+        {
+          source: '/images/:path*',
+          destination: '/images/:path*',
+        },
+      ]
     }
   }
   

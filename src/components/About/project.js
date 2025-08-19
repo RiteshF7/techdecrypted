@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import Image from 'next/image';
 
@@ -71,6 +73,14 @@ const ProjectItem = ({ project, index }) => {
                   width={500}
                   height={300}
                   className="w-full h-48 object-cover"
+                  priority={imageIndex === 0} // Prioritize first image
+                  onError={(e) => {
+                    console.error(`Failed to load image: ${image}`);
+                    e.target.style.display = 'none';
+                  }}
+                  onLoad={() => {
+                    console.log(`Successfully loaded image: ${image}`);
+                  }}
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
                   <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold">
@@ -100,10 +110,10 @@ const ProjectsSection = () => {
       description: "CodePlayground Learn coding with virtual electronics! An interactive platform where users control virtual components like NeoPixels, LEDs, and servos using block-based programming (Blockly). Features include a real-time playground, Blockly code generation, and a set of fun challenges to teach coding and hardware concepts — all in the browser.",
       technologies: ["JavaScript", "Blockly", "Web APIs", "Virtual Electronics", "Educational Platform"],
       images: [
-        "/images/projects/elgo 1.png",
-        "/images/projects/elgo 2.png",
-        "/images/projects/elgo 3.png",
-        "/images/projects/elgo 4.png",
+        "/images/Projects/elgo_1.png",
+        "/images/Projects/elgo_2.png",
+        "/images/Projects/elgo_3.png",
+        "/images/Projects/elgo_4.png",
       ],
       githubUrl: "https://github.com/RiteshF7",
       liveUrl: null
@@ -113,8 +123,8 @@ const ProjectsSection = () => {
       description: "Empowering Creativity with Custom Microcontrollers! A revolutionary self-made microcontroller powered by the ESP8266 chipset, integrated seamlessly with custom USB ports. Pairs perfectly with the Elgorithm platform, enabling users to control hardware components using Blockly and MicroPython.",
       technologies: ["ESP8266", "MicroPython", "Hardware Design", "Blockly", "Arduino IDE", "Custom PCB"],
       images: [
-        "/images/projects/procode 1.png",
-        "/images/projects/procode 2.jpg",
+        "/images/Projects/procode_1.png",
+        "/images/Projects/procode_2.jpg",
       ],
       githubUrl: "https://github.com/RiteshF7",
       liveUrl: null
@@ -124,7 +134,7 @@ const ProjectsSection = () => {
       description: "SimpleSample is a comprehensive Android boilerplate repository designed to eliminate the repetitive setup process when starting new Android projects. Developers can simply merge feature branches to quickly add commonly used functionalities like dependency injection, networking, database integration, and more.",
       technologies: ["Android", "Kotlin", "Gradle", "Architecture Components", "Dependency Injection", "Room Database"],
       images: [
-        "/images/projects/boilerplatebanner.png",
+        "/images/Projects/boilerplatebanner.png",
       ],
       githubUrl: "https://github.com/RiteshF7",
       liveUrl: null
@@ -134,9 +144,9 @@ const ProjectsSection = () => {
       description: "This project automates batch 3D printing by generating dynamic G-code files and controlling OctoPrint-enabled printers via REST API. It supports configurable repeat printing, Z-axis offsets, and custom temperature settings for high-volume production.",
       technologies: ["Python", "G-Code", "OctoPrint API", "3D Printing", "REST APIs", "Automation"],
       images: [
-        "/images/projects/gcodebanner.png",
-        "/images/projects/gcodeone.png",
-        "/images/projects/gcodetwo.png",
+        "/images/Projects/gcodebanner.png",
+        "/images/Projects/gcodeone.png",
+        "/images/Projects/gcodetwo.png",
       ],
       githubUrl: "https://github.com/RiteshF7",
       liveUrl: null
