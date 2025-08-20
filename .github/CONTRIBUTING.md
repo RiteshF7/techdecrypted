@@ -53,7 +53,7 @@ Commit Type : `feat|fix|perf|refactor|test|ci|docs|build|chore`
 **Examples**
 
 - feat: when create new feature.
-- style: when styling a this application.
+- style: when styling a this application. 
 - fix: when fixing a bug.
 
 ## Issues and feature requests
