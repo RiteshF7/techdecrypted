@@ -131,7 +131,7 @@ const Tag = ({
     <span className={`
       inline-flex items-center gap-2 px-3 py-1.5 
       bg-gradient-to-r ${variants[variant]}
-      border rounded-full text-sm font-medium 
+      border rounded-md text-sm font-medium 
       backdrop-blur-sm hover:scale-105 transition-transform duration-200
       ${className}
     `}>
