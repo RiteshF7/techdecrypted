@@ -16,14 +16,12 @@ html:not(.dark) {
     color-scheme: dark;
 }
 
-h1>a>.icon.icon-link:before,
-h2>a>.icon.icon-link:before,
-h3>a>.icon.icon-link:before{
-content: "#";
-font-size: 0.8rem;
+/* Remove hash symbols from headings */
+h1, h2, h3, h4, h5, h6 {
+    text-decoration: none !important;
 }
 
-h2 > a, h3>a {
+h1 > a, h2 > a, h3 > a, h4 > a, h5 > a, h6 > a {
     text-decoration: none !important;
 }
 

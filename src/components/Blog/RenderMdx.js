@@ -114,6 +114,25 @@ const mdxComponents = {
 const RenderMdx = ({blog}) => {
   return (
     <div className='col-span-12  lg:col-span-8 font-in prose sm:prose-base md:prose-lg max-w-max
+    prose-headings:no-underline
+    prose-headings:before:content-none
+    prose-headings:after:content-none
+    prose-h1:before:content-none
+    prose-h1:after:content-none
+    prose-h2:before:content-none
+    prose-h2:after:content-none
+    prose-h3:before:content-none
+    prose-h3:after:content-none
+    prose-h4:before:content-none
+    prose-h4:after:content-none
+    prose-h5:before:content-none
+    prose-h5:after:content-none
+    prose-h6:before:content-none
+    prose-h6:after:content-none
+    prose-a:no-underline
+    prose-a:before:content-none
+    prose-a:after:content-none
+    
     prose-blockquote:bg-accent/20 
     prose-blockquote:p-2
     prose-blockquote:px-6
@@ -133,7 +152,11 @@ const RenderMdx = ({blog}) => {
     dark:prose-li:marker:text-accentDark
 
     first-letter:text-3xl
-    sm:first-letter:text-5xl'> 
+    sm:first-letter:text-5xl'
+    style={{
+      '--tw-prose-headings': 'none',
+      '--tw-prose-links': 'none'
+    }}> 
         <MDXContent code={blog.body} components={mdxComponents}/>
     </div>
   )
