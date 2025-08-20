@@ -1,0 +1,159 @@
+---
+title: "Modern MDX Components Showcase"
+description: "A demonstration of the new modern, subtle, and mobile-friendly MDX components"
+image: android.jpg
+publishedAt: 2025-01-15 10:00:00
+updatedAt: 2025-01-15 10:00:00
+author: "Ritesh Singh"
+featured: false
+homeCover: false
+isPublished: false
+tags:
+  - mdx
+  - components
+  - showcase
+  - design
+slug: example-components
+layout: BlogLayout
+---
+
+This is a showcase of the new modern MDX components that are subtle, reusable, and mobile-friendly.
+
+## Callout Components
+
+<Callout type="info" title="Information">
+  This is an informational callout with a blue theme. Perfect for highlighting important information.
+</Callout>
+
+<Callout type="warning" title="Warning">
+  This is a warning callout with an amber theme. Use this for important warnings or cautions.
+</Callout>
+
+<Callout type="success" title="Success">
+  This is a success callout with a green theme. Great for confirming successful actions or positive outcomes.
+</Callout>
+
+<Callout type="error" title="Error">
+  This is an error callout with a red theme. Use this for errors or critical information.
+</Callout>
+
+## Quote Component
+
+<Quote author="Albert Einstein" source="The Theory of Relativity">
+  Imagination is more important than knowledge. For knowledge is limited, whereas imagination embraces the entire world, stimulating progress, giving birth to evolution.
+</Quote>
+
+## Tag Components
+
+<TagGroup>
+  <Tag variant="default">Default Tag</Tag>
+  <Tag variant="primary">Primary Tag</Tag>
+  <Tag variant="success">Success Tag</Tag>
+  <Tag variant="warning">Warning Tag</Tag>
+  <Tag variant="danger">Danger Tag</Tag>
+  <Tag variant="purple">Purple Tag</Tag>
+</TagGroup>
+
+## Stats Cards
+
+<StatsGrid cols={2}>
+  <StatsCard 
+    title="Total Users" 
+    value="1.2M" 
+    description="Active monthly users"
+    variant="primary"
+  />
+  <StatsCard 
+    title="Retention Rate" 
+    value="85%" 
+    description="User retention after 30 days"
+    variant="success"
+  />
+  <StatsCard 
+    title="Revenue" 
+    value="$2.4M" 
+    description="Monthly recurring revenue"
+    variant="purple"
+  />
+  <StatsCard 
+    title="Growth" 
+    value="+12%" 
+    description="Month over month growth"
+    variant="warning"
+  />
+</StatsGrid>
+
+## Table Component
+
+<Table>
+  <TableHeader>
+    <TableHeaderCell>Feature</TableHeaderCell>
+    <TableHeaderCell>Status</TableHeaderCell>
+    <TableHeaderCell>Priority</TableHeaderCell>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell className="font-medium text-white">Mobile Responsive</TableCell>
+      <TableCell>
+        <Tag variant="success">✅ Complete</Tag>
+      </TableCell>
+      <TableCell>
+        <Tag variant="danger">High</Tag>
+      </TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell className="font-medium text-white">Dark Mode</TableCell>
+      <TableCell>
+        <Tag variant="warning">🔄 In Progress</Tag>
+      </TableCell>
+      <TableCell>
+        <Tag variant="warning">Medium</Tag>
+      </TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell className="font-medium text-white">Analytics</TableCell>
+      <TableCell>
+        <Tag variant="primary">📊 Planned</Tag>
+      </TableCell>
+      <TableCell>
+        <Tag variant="default">Low</Tag>
+      </TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Divider
+
+<Divider text="Section Break" />
+
+## Image with Caption
+
+<ImageWithCaption 
+  src="/images/example.jpg" 
+  alt="Example image" 
+  caption="This is an example image with a caption"
+/>
+
+## Mixed Components
+
+<Callout type="info" title="Pro Tip">
+  You can combine these components in any way you like. They're designed to work together seamlessly.
+</Callout>
+
+<TagGroup>
+  <Tag variant="primary">Reusable</Tag>
+  <Tag variant="success">Mobile-Friendly</Tag>
+  <Tag variant="purple">Modern Design</Tag>
+</TagGroup>
+
+<Quote>
+  The best components are the ones that disappear into the background while enhancing the content.
+</Quote>
+
+This concludes our showcase of the modern MDX components. These components are designed to be:
+
+- **Subtle**: They enhance content without overwhelming it
+- **Modern**: Using contemporary design patterns and gradients
+- **Mobile-friendly**: Responsive design that works on all screen sizes
+- **Reusable**: Can be used across different blog posts and content types
+- **Accessible**: Proper contrast ratios and semantic markup

@@ -1,13 +1,30 @@
 "use client"
 import React from 'react'
 import MDXContent from './MdxContent'
+import {
+  Callout,
+  Quote,
+  Tag,
+  TagGroup,
+  StatsCard,
+  StatsGrid,
+  Table,
+  TableHeader,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+  CodeBlock,
+  Divider,
+  ImageWithCaption
+} from './MdxComponents'
 
-// Custom components for MDX
+// Legacy components for backward compatibility
 const Alert = ({ children, className = "" }) => {
   return (
-    <div className={`border border-blue-200 bg-blue-50 p-4 rounded-lg ${className}`}>
+    <Callout type="info" className={className}>
       {children}
-    </div>
+    </Callout>
   );
 };
 Alert.displayName = 'Alert';
@@ -22,22 +39,17 @@ const AlertDescription = ({ children }) => {
 AlertDescription.displayName = 'AlertDescription';
 
 const Badge = ({ children, variant = "default" }) => {
-  const variants = {
-    default: "bg-gray-100 text-gray-800",
-    secondary: "bg-gray-200 text-gray-700"
-  };
-  
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variants[variant]}`}>
+    <Tag variant={variant === "default" ? "primary" : "default"}>
       {children}
-    </span>
+    </Tag>
   );
 };
 Badge.displayName = 'Badge';
 
 const Card = ({ children, className = "" }) => {
   return (
-    <div className={`bg-white border border-gray-200 rounded-lg shadow-sm ${className}`}>
+    <div className={`bg-gradient-to-br from-gray-900/80 to-black/80 backdrop-blur-xl border-2 border-gray-400/30 rounded-xl p-6 ${className}`}>
       {children}
     </div>
   );
@@ -46,7 +58,7 @@ Card.displayName = 'Card';
 
 const CardHeader = ({ children }) => {
   return (
-    <div className="px-6 py-4 border-b border-gray-200">
+    <div className="px-6 py-4 border-b border-gray-700">
       {children}
     </div>
   );
@@ -55,7 +67,7 @@ CardHeader.displayName = 'CardHeader';
 
 const CardTitle = ({ children }) => {
   return (
-    <h3 className="text-lg font-semibold text-gray-900">
+    <h3 className="text-lg font-semibold text-white">
       {children}
     </h3>
   );
@@ -72,6 +84,24 @@ const CardContent = ({ children, className = "" }) => {
 CardContent.displayName = 'CardContent';
 
 const mdxComponents = {
+  // Modern components
+  Callout,
+  Quote,
+  Tag,
+  TagGroup,
+  StatsCard,
+  StatsGrid,
+  Table,
+  TableHeader,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+  CodeBlock,
+  Divider,
+  ImageWithCaption,
+  
+  // Legacy components for backward compatibility
   Alert,
   AlertDescription,
   Badge,
